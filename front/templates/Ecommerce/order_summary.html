@@ -1,0 +1,99 @@
+{% extends 'Ecommerce/home-page.html' %} {% block title %} Summary {% endblock title %}
+
+
+
+
+ {% block body %}
+ 
+<div class="container">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success alert-dismissible mt-3 " role="alert">
+      <span type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></span>
+      <strong>{{message}}</strong> Still on beta stage.
+    </div>
+    
+    {% endfor %}
+    
+    {% endif %}
+<div class="table-responsive">
+    <h3 class="mt-2">Order Summary</h3>
+    <table class="table  mt-4">
+      {% if not empty %}
+      <tr>
+          <td>Cart is Empty</td>
+          <a class="btn btn-dark float-right" href="/">Continue Shopping</a>
+      </tr>
+      {% else %}
+      <thead>
+        <tr>
+            <th scope="col">SNo.</th>
+            <th scope="col">Title</th>
+            <th scope="col">Price</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Total Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        
+       
+       {% for order in orders %}
+      
+       {% for object in order.items.all %}
+        <tr>
+            <th scope="row">{{forloop.counter}}</th>
+            <td>{{object.item.title}}</td>
+            <td>{{object.item.price}}</td>
+            <td>
+               <a href="{% url 'add-to-cart' object.item.slug %}"> <i class="fas fa-plus mr-2"></i></a>
+                {{object.quantity}}
+                <a href="{% url 'remove-single-item-from-cart' object.item.slug %}"><i class="fas fa-minus ml-2"></i></td></a>
+            
+            
+            <td>{% if object.get_total_item_discount_price %}
+                {{object.get_total_item_discount_price}}
+               <span class="badge badge-primary"> Saving:{{object.get_saved_amount}}</span>
+              
+                {% else %}
+                  {{object.get_total_item_price}}
+                
+                {% endif %}
+            </td>
+            <td><a style="color:red;" href="{% url 'remove-from-cart' object.item.slug %}"><i class="fas fa-trash float-right"></i<a/></td>
+        </tr>
+       
+        {% endfor %}
+        <tr>
+            {% if order.coupon %}
+            <td><b>{{order.coupon.code}}: -{{order.coupon.amount}}</b></td>
+            {% endif %}
+            <td><b>Total Amount:{{order.total_amount}}</b></td>
+           
+        </tr>
+        {% if order.total_amount %}
+        <a class="btn btn-warning float-right" href="{% url 'check_out' %}">Proceed To Checkout</a>
+        <a class="btn btn-dark float-right" href="/">Continue Shopping</a>
+       
+        {% endif %}
+      
+        
+        
+            
+       
+        {% endfor %}
+       
+        
+       
+     
+        
+    </tbody>
+      {% endif %}
+        
+        
+    </table>
+   
+</div>
+
+</div>
+{% endblock body %}

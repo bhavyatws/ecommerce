@@ -1,0 +1,306 @@
+{% extends "Ecommerce/home-page.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Material Design Bootstrap</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="{% static 'css/mdb.min.css' %}" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
+    <link href="{% static 'flags/flags.css' %}" rel="stylesheet">
+{% endblock head %}
+{% block body %}
+    <!-- Navbar -->
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
+        <div class="container">
+            <!-- Brand -->
+            <!-- Links -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <!-- Left -->
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link waves-effect" href="#">Home
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                </ul>
+                <!-- Right -->
+                <ul class="navbar-nav nav-flex-icons">
+                    <li class="nav-item">
+                        <a class="nav-link waves-effect">
+                            <span class="badge red z-depth-1 mr-1">1</span>
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="clearfix d-none d-sm-inline-block">Cart</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar -->
+    <!--Main layout-->
+    <!--Main layout-->
+    <main class="mt-5 pt-4">
+        <div class="container wow fadeIn">
+            <!-- Heading -->
+            <h2 class="my-5 h2 text-center">Checkout form</h2>
+            <!--Grid row-->
+            <div class="row">
+                <!--Grid column-->
+                <div class="col-md-8 mb-4">
+                    <!--Card-->
+                    <div class="card">
+                        <!--Card content-->
+                        <form class="card-body" method="POST" action="{% url 'check_out' %}">
+                            <h3>Shipping Address</h3>
+                            <hr>
+                            <div class='hideable_shipping_form'>
+                                <!--address-->
+                                <div class="md-form mb-5">
+                                    <input type="text"
+                                           id="shipping_address"
+                                           name='shipping_address'
+                                           class="form-control"
+                                           placeholder="Street Address">
+                                    <label for="shipping_address" class=""></label>
+                                </div>
+                                <!--address-2-->
+                                <div class="md-form mb-5">
+                                    <input type="text"
+                                           id="shipping_address2"
+                                           name="shipping_address2"
+                                           class="form-control"
+                                           placeholder="Appartment Address">
+                                    <label for="address-2" class=""></label>
+                                </div>
+                                <!--Grid row-->
+                                <div class="row">
+                                    <!--Grid column-->
+                                    <div class="col-lg-4 col-md-12 mb-4">
+                                        <label for="country">Country</label>
+                                        {{ form.shipping_country }}
+                                    </div>
+                                    <!--Grid column-->
+                                    <!--Grid column-->
+                                    <!--Grid column-->
+                                    <!--Grid column-->
+                                    <div class="col-lg-4 col-md-6 mb-4">
+                                        <label for="zip">Zip</label>
+                                        <input type="text"
+                                               class="form-control"
+                                               name="shipping_zip"
+                                               id="shipping_zip"
+                                               placeholder=""
+                                               required>
+                                        <div class="invalid-feedback">Zip code required.</div>
+                                    </div>
+                                    <!--Grid column-->
+                                </div>
+                                <!--Grid row-->
+                                <hr>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox"
+                                           class="custom-control-input"
+                                           id="same_billing_address"
+                                           name="same_billing_address">
+                                    <label class="custom-control-label" for="same_billing_address">
+                                        Shipping address is the same as my billing address
+                                    </label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox"
+                                           class="custom-control-input"
+                                           name="set_default-shipping"
+                                           id="set_default-shipping">
+                                    <label class="custom-control-label" for="set_default-shipping">Save as default shipping address</label>
+                                </div>
+                            </div>
+                            {% if  default_shipping_address %}
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox"
+                                       class="custom-control-input"
+                                       name="use_default_shipping"
+                                       id="use_default_shipping">
+                                <label class="custom-control-label" for="use_default_shipping">{{default_shipping_address.address|truncatechars:10}}</label>
+                            </div>
+                            
+                            {% endif %}
+                           
+                            <hr>
+                            <h3>Billing Address</h3>
+                            <div class='hideable_shipping_form'>
+                                <!--address-->
+                                <div class="md-form mb-5">
+                                    <input type="text"
+                                           id="billing_address"
+                                           name='billingg_address'
+                                           class="form-control"
+                                           placeholder="Street Address">
+                                    <label for="billing_address" class=""></label>
+                                </div>
+                                <!--address-2-->
+                                <div class="md-form mb-5">
+                                    <input type="text"
+                                           id="billing_address2"
+                                           name="billing_address2"
+                                           class="form-control"
+                                           placeholder="Appartment Address">
+                                    <label for="billing_address2" class=""></label>
+                                </div>
+                                <!--Grid row-->
+                                <div class="row">
+                                    <!--Grid column-->
+                                    <div class="col-lg-4 col-md-12 mb-4">
+                                        <label for="country">Country</label>
+                                        {{ form.billing_country }}
+                                    </div>
+                                    <!--Grid column-->
+                                    <!--Grid column-->
+                                    <!--Grid column-->
+                                    <!--Grid column-->
+                                    <div class="col-lg-4 col-md-6 mb-4">
+                                        <label for="zip">Zip</label>
+                                        <input type="text"
+                                               class="form-control"
+                                               name="billinh_zip"
+                                               id="billinh_zip"
+                                               placeholder="Zip Code"
+                                               required>
+                                        <div class="invalid-feedback">Zip code required.</div>
+                                    </div>
+                                    <!--Grid column-->
+                                </div>
+                                <!--Grid row-->
+                                <hr>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox"
+                                           class="custom-control-input"
+                                           id="same_billing_address"
+                                           name="same_billing_address">
+                                    <label class="custom-control-label" for="same_billing_address">
+                                        Billing address is the same as my shipping address
+                                    </label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox"
+                                           class="custom-control-input"
+                                           name="set_default-billing"
+                                           id="set_default-billing">
+                                    <label class="custom-control-label" for="set_default-billing">Save as default Billing address</label>
+                                </div>
+                            </div>
+                            {% if default_shipping_address %}
+                            
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox"
+                                       class="custom-control-input"
+                                       name="use_default_billing"
+                                       id="use_default_billing">
+                                <label class="custom-control-label" for="use_default_billing">{{default_shipping_address.address|truncatechars:10}}</label>
+                            </div>
+                            {% endif %}
+                           
+                            <hr>
+                            <h3>Payment Option</h3>
+                            <div class="d-block my-3">
+                                <div class="custom-control custom-radio">
+                                    <input id="paypal"
+                                           name="paymentMethod"
+                                           type="radio"
+                                           class="custom-control-input"
+                                           required>
+                                    <label class="custom-control-label" for="paypal">Paypal</label>
+                                </div>
+                                <div class="custom-control custom-radio">
+                                    <input id="paypal"
+                                           name="paymentMethod"
+                                           type="radio"
+                                           class="custom-control-input"
+                                           required>
+                                    <label class="custom-control-label" for="RazorPay">RazorPay</label>
+                                </div>
+                            </div>
+                            <hr class="mb-4">
+                            <button class="btn btn-primary btn-lg btn-block" type="submit">
+                                Continue to checkout
+                            </button>
+                        </form>
+                    </div>
+                    <!--/.Card-->
+                </div>
+                <!--Grid column-->
+                <!--Grid column-->
+                {% include 'Ecommerce/order_snippet.html' %}
+                <!--Grid column-->
+            </div>
+            <!--Grid row-->
+        </div>
+    </main>
+    <!--Main layout-->
+    <!--Footer-->
+    <footer class="page-footer text-center font-small mt-4 wow fadeIn">
+        <!--Call to action-->
+        <!--/.Call to action-->
+        <hr class="my-4">
+        <!-- Social icons -->
+        <div class="pb-4">
+            <a href="https://www.facebook.com/mdbootstrap" target="_blank">
+                <i class="fab fa-facebook-f mr-3"></i>
+            </a>
+            <a href="https://twitter.com/MDBootstrap" target="_blank">
+                <i class="fab fa-twitter mr-3"></i>
+            </a>
+            <a href="https://www.youtube.com/watch?v=7MUISDJ5ZZ4" target="_blank">
+                <i class="fab fa-youtube mr-3"></i>
+            </a>
+            <a href="https://plus.google.com/u/0/b/107863090883699620484"
+               target="_blank">
+                <i class="fab fa-google-plus-g mr-3"></i>
+            </a>
+            <a href="https://dribbble.com/mdbootstrap" target="_blank">
+                <i class="fab fa-dribbble mr-3"></i>
+            </a>
+            <a href="https://pinterest.com/mdbootstrap" target="_blank">
+                <i class="fab fa-pinterest mr-3"></i>
+            </a>
+            <a href="https://github.com/mdbootstrap/bootstrap-material-design"
+               target="_blank">
+                <i class="fab fa-github mr-3"></i>
+            </a>
+            <a href="http://codepen.io/mdbootstrap/" target="_blank">
+                <i class="fab fa-codepen mr-3"></i>
+            </a>
+        </div>
+        <!-- Social icons -->
+        <!--Copyright-->
+        <div class="footer-copyright py-3">
+            © 2019 Copyright:
+            <a href="https://mdbootstrap.com/education/bootstrap/" target="_blank"> MDBootstrap.com </a>
+        </div>
+        <!--/.Copyright-->
+    </footer>
+    <!--/.Footer-->
+    <!-- SCRIPTS -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="js/mdb.min.js"></script>
+    <!-- Initializations -->
+    <script type="text/javascript">
+    // Animations initialization
+    new WOW().init();
+    </script>
+{% endblock body %}
