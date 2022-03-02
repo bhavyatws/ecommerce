@@ -24,5 +24,6 @@ urlpatterns = [
     path('filter-shirt/<slug:data>/',  views.filter_function, name='filter-shirt'),
     path('filter-sport/<slug:data>/',  views.filter_function, name='filter-sport'),
     path('filter-outwear/<slug:data>/',  views.filter_function, name='filter-outwear'),
+    path('admin-dashboard/',  views.admin_dashboard, name='admin_dashboard'),
     
 ]

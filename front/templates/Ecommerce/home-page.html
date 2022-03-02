@@ -62,6 +62,12 @@
       <a class="navbar-brand waves-effect" href="/" >
         <strong class="blue-text">Ecommerce</strong>
       </a>
+      {% if user.is_authenticated and user.is_staff and user.is_superuser %}
+      <a class="navbar-brand btn btn-warning " href="{% url 'admin_dashboard' %}" >
+        <strong class="blue-text">Admin Dashboard</strong>
+      </a>
+  
+      {% endif %}
 
       <!-- Collapse -->
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"

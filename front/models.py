@@ -19,11 +19,12 @@ category = (
     
 )
 status = (
-    ("Accepted", "Accepted"),
-    ("Packed", "Packed"),
-    ("On the way", "On the way"),
-    ("Delivered", "Delivered"),
-    ("Cancel", "Cancel"),
+    ("Pe", "Pending"),
+    ("A", "Accepted"),
+    ("Pa", "Packed"),
+    ("OTW", "On the way"),
+    ("D", "Delivered"),
+    ("C", "Cancel"),
    
     
 )
@@ -139,8 +140,9 @@ class Order(models.Model):
     shipping_address=models.ForeignKey('Address',related_name='shipping_address',on_delete=models.SET_NULL,blank=True,null=True)
     payment_detail=models.ForeignKey('Payments',on_delete=models.SET_NULL,blank=True,null=True)
     coupon=models.ForeignKey('Coupon',on_delete=models.SET_NULL,blank=True,null=True)
-    being_delivered=models.BooleanField(default=False)
-    received=models.BooleanField(default=False)
+    being_delivered=models.BooleanField(default=False)#deliver hogaya
+    received=models.BooleanField(default=False)#order hmne receive karliya
+    order_status=models.CharField(choices=status,max_length=10,default='Pe')
     refund_requested=models.BooleanField(default=False)
     refund_granted=models.BooleanField(default=False)
     def __str__(self):

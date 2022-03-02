@@ -589,5 +589,16 @@ def search(request):
         obj=Item.objects.filter(Q(title__icontains=data)|Q(description__icontains=data))
         return render(request,'Ecommerce/home-page.html',{'object_list':obj})
     return HttpResponse("Not Found")
+from django.db.models import Sum
+def admin_dashboard(request):
+    users=Customer.objects.all().count()
+    total_ordered=Order.objects.filter(ordered=True).count()
+    total_earning=Payments.objects.all().aggregate(Sum('amount'))
+    order_pending=Order.objects.filter(order_status="Pe").count()
+    print(order_pending)
+    orders=Order.objects.all()
+    context={'orders':orders,'users':users,'total_ordered':total_ordered,'total_earning':total_earning['amount__sum']
+    ,'order_pending':order_pending}
+    return render(request,'Ecommerce/admin_dashboard.html',context=context)
 
     
