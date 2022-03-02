@@ -1,7 +1,30 @@
 {% extends "Ecommerce/home-page.html" %}
 {% load static %}
+{% load cart_template_tags %}
 {% load crispy_forms_tags %}
 {% block head %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script><script>
+var hideable_shipping_form = $('.hideable_shipping_form');
+var hideable_billing_form = $('.hideable_billing_form');
+var use_default_billing = document.querySelector("input[name=use_default_billing]");
+var use_default_shipping = document.querySelector("input[name=use_default_shipping]");
+use_default_billing.addEventListener('change', function() {
+if (this.checked) {
+hideable_billing_form.hide();
+} else {
+hideable_billing_form.show();
+}
+})
+use_default_shipping.addEventListener('change', function() {
+    if (this.checked) {
+    hideable_shipping_form.hide();
+    } else {
+    hideable_shipping_form.show();
+    }
+    })
+   
+    </script>
     <meta charset="utf-8">
     <meta name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -28,7 +51,7 @@
                 <!-- Left -->
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a class="nav-link waves-effect" href="#">Home
+                        <a class="nav-link waves-effect" href="/">Home
                             <span class="sr-only">(current)</span>
                         </a>
                     </li>
@@ -37,7 +60,7 @@
                 <ul class="navbar-nav nav-flex-icons">
                     <li class="nav-item">
                         <a class="nav-link waves-effect">
-                            <span class="badge red z-depth-1 mr-1">1</span>
+                            <span class="badge red z-depth-1 mr-1">{{request.user|cart_item_count}}</span>
                             <i class="fas fa-shopping-cart"></i>
                             <span class="clearfix d-none d-sm-inline-block">Cart</span>
                         </a>
@@ -61,17 +84,18 @@
                     <div class="card">
                         <!--Card content-->
                         <form class="card-body" method="POST" action="{% url 'check_out' %}">
+                            {% csrf_token %}
                             <h3>Shipping Address</h3>
                             <hr>
                             <div class='hideable_shipping_form'>
                                 <!--address-->
                                 <div class="md-form mb-5">
                                     <input type="text"
-                                           id="shipping_address"
-                                           name='shipping_address'
+                                           id="shipping_address1"
+                                           name='shipping_address1'
                                            class="form-control"
-                                           placeholder="Street Address">
-                                    <label for="shipping_address" class=""></label>
+                                           placeholder="Street Address1">
+                                    <label for="shipping_address1" class=""></label>
                                 </div>
                                 <!--address-2-->
                                 <div class="md-form mb-5">
@@ -110,9 +134,9 @@
                                 <div class="custom-control custom-checkbox">
                                     <input type="checkbox"
                                            class="custom-control-input"
-                                           id="same_billing_address"
-                                           name="same_billing_address">
-                                    <label class="custom-control-label" for="same_billing_address">
+                                           id="same_billing_address1"
+                                           name="same_billing_address1">
+                                    <label class="custom-control-label" for="same_billing_address1">
                                         Shipping address is the same as my billing address
                                     </label>
                                 </div>
@@ -125,24 +149,24 @@
                                 </div>
                             </div>
                             {% if  default_shipping_address %}
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox"
-                                       class="custom-control-input"
-                                       name="use_default_shipping"
-                                       id="use_default_shipping">
-                                <label class="custom-control-label" for="use_default_shipping">{{default_shipping_address.address|truncatechars:10}}</label>
-                            </div>
-                            
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox"
+                                           class="custom-control-input"
+                                           name="use_default_shipping"
+                                           id="use_default_shipping">
+                                    <label class="custom-control-label" for="use_default_shipping">
+                                        {{ default_shipping_address.street_address|truncatechars:10 }}
+                                    </label>
+                                </div>
                             {% endif %}
-                           
                             <hr>
                             <h3>Billing Address</h3>
-                            <div class='hideable_shipping_form'>
+                            <div class='hideable_billing_form'>
                                 <!--address-->
                                 <div class="md-form mb-5">
                                     <input type="text"
-                                           id="billing_address"
-                                           name='billingg_address'
+                                           id="billing_address1"
+                                           name='billing_address1'
                                            class="form-control"
                                            placeholder="Street Address">
                                     <label for="billing_address" class=""></label>
@@ -171,11 +195,10 @@
                                         <label for="zip">Zip</label>
                                         <input type="text"
                                                class="form-control"
-                                               name="billinh_zip"
+                                               name="billing_zip"
                                                id="billinh_zip"
-                                               placeholder="Zip Code"
-                                               required>
-                                        <div class="invalid-feedback">Zip code required.</div>
+                                               placeholder="Zip Code">
+                                        <div class="invalid-feedback">Zip code .</div>
                                     </div>
                                     <!--Grid column-->
                                 </div>
@@ -198,41 +221,34 @@
                                     <label class="custom-control-label" for="set_default-billing">Save as default Billing address</label>
                                 </div>
                             </div>
-                            {% if default_shipping_address %}
-                            
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox"
-                                       class="custom-control-input"
-                                       name="use_default_billing"
-                                       id="use_default_billing">
-                                <label class="custom-control-label" for="use_default_billing">{{default_shipping_address.address|truncatechars:10}}</label>
-                            </div>
+                            {% if default_billing_address %}
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox"
+                                           class="custom-control-input"
+                                           name="use_default_billing"
+                                           id="use_default_billing">
+                                    <label class="custom-control-label" for="use_default_billing">
+                                        {{ default_shipping_address.street_address|truncatechars:10 }}
+                                    </label>
+                                </div>
                             {% endif %}
-                           
                             <hr>
                             <h3>Payment Option</h3>
                             <div class="d-block my-3">
-                                <div class="custom-control custom-radio">
-                                    <input id="paypal"
-                                           name="paymentMethod"
-                                           type="radio"
-                                           class="custom-control-input"
-                                           required>
-                                    <label class="custom-control-label" for="paypal">Paypal</label>
-                                </div>
-                                <div class="custom-control custom-radio">
-                                    <input id="paypal"
-                                           name="paymentMethod"
-                                           type="radio"
-                                           class="custom-control-input"
-                                           required>
-                                    <label class="custom-control-label" for="RazorPay">RazorPay</label>
-                                </div>
+                                {% for value,name in form.fields.payment_option.choices %}
+                                    <div class="custom-control custom-radio">
+                                        <input id="{{ name }}"
+                                               name="payment_option"
+                                               type="radio"
+                                               value="{{ value }}"
+                                               class="custom-control-input"
+                                               required>
+                                        <label class="custom-control-label" for="{{ name }}">{{ name }}</label>
+                                    </div>
+                                {% endfor %}
                             </div>
                             <hr class="mb-4">
-                            <button class="btn btn-primary btn-lg btn-block" type="submit">
-                                Continue to checkout
-                            </button>
+                            <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
                         </form>
                     </div>
                     <!--/.Card-->
@@ -302,5 +318,6 @@
     <script type="text/javascript">
     // Animations initialization
     new WOW().init();
+   
     </script>
 {% endblock body %}

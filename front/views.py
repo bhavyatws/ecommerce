@@ -1,13 +1,8 @@
 
 
-from ast import Add
-import email
-from email import message
-import imp
+
 from random import random
-from tkinter.tix import Tree
-from urllib import request
-from weakref import ref
+
 from django.utils import timezone
 from django.http import HttpResponse
 from django.shortcuts import redirect, render,get_object_or_404,redirect
@@ -26,6 +21,7 @@ import razorpay
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseBadRequest
+from django.db.models import Q
 
 # Create your views here.
 import random
@@ -51,7 +47,8 @@ class ItemDetailView(LoginRequiredMixin,DetailView):
     model=Item
     template_name='ecommerce/product-page.html'
 
-class OrderSummary(View):
+class OrderSummary(LoginRequiredMixin,View):
+    
     def get(self,args,**kwargs):
         try:
             order=Order.objects.filter(user=self.request.user,ordered=False)
@@ -84,7 +81,7 @@ def signin(request):
         
 
     return render(request,'login.html')
-    
+# @login_required('login')   
 def signout(request):
     logout(request)
     messages.success(request,"Successfully logout")
@@ -131,6 +128,7 @@ def buy_now(request):#checkout
     
 #     context={'query':query}
 #     return render(request,'bootstrap_templates/cart.html',context)
+# @login_required("login")
 def add_to_cart(request,slug):
     item=get_object_or_404(Item,slug=slug)
     order_item,created=OrderItem.objects.get_or_create(item=item,
@@ -167,6 +165,7 @@ def add_to_cart(request,slug):
     # return render(request,'bootstrap_templates/cart.html',context)
     # return redirect("product",slug=slug)
     return redirect("order-summary")
+# @login_required("login")
 def remove_from_cart(request,slug):
     item=get_object_or_404(Item,slug=slug)
     order_query=Order.objects.filter(user=request.user,ordered=False)
@@ -202,6 +201,7 @@ def remove_from_cart(request,slug):
         return redirect("order-summary")
     # return redirect("product",slug=slug)
     return redirect("order-summary")
+# @login_required("login")
 def remove_single_item_from_cart(request,slug):
     item=get_object_or_404(Item,slug=slug)
     order_query=Order.objects.filter(user=request.user,ordered=False)
@@ -246,7 +246,7 @@ def is_valid_form(values):#values is list here
             valid=False
     return valid
 
-class CheckOutView(View):
+class CheckOutView(LoginRequiredMixin,View):
     def get(self,*args,**kwargs):
         try:
             form=CheckoutForm()
@@ -277,27 +277,31 @@ class CheckOutView(View):
         order=Order.objects.get(user=self.request.user,ordered=False)
         try:
             if form.is_valid():
-                use_default_shipping=form.cleaned_data.get('use_default_shipping')
+                use_default_shipping=self.request.POST.get('use_default_shipping')
                 if use_default_shipping:
                     print("using default shipping")
                     address_qs=Address.objects.filter(
                         user=self.request.user,
                         address_type='S',
                         default=True
-                    )
+                        )
                     if address_qs.exists():
                         shipping_address=address_qs[0]
+                        order.shipping_address=shipping_address
+                        order.save()
                     else:
                         messages.info(self.request,"No default shipping address availabel")
                         return redirect("check_out")
                 else:
                     print("User is entering new shipping address")
 
-                    
-                    shipping_address1=form.cleaned_data.get('shipping_address')
-                    shipping_address2=form.cleaned_data.get('shipping_address2')
+                        
+                    shipping_address1=self.request.POST.get('shipping_address1')
+                    print(shipping_address1)
+                    shipping_address2=self.request.POST.get('shipping_address2')
+                    print(shipping_address2)
                     shipping_country=form.cleaned_data.get('shipping_country')
-                    shipping_zip=form.cleaned_data.get('shipping_zip')
+                    shipping_zip=self.request.POST.get('shipping_zip')
                     if is_valid_form([shipping_address1,shipping_address2,shipping_country,shipping_zip]):
                         shipping_address=Address(
                         user=self.request.user,
@@ -307,34 +311,87 @@ class CheckOutView(View):
                         zip= shipping_zip,
                         address_type='S'
                         )
+                        
                         shipping_address.save()
-                        order.address=shipping_address
+                        order.shipping_address=shipping_address
                         order.save()
-                        set_default_shipping=form.cleaned_data.get("set_default_shipping")
+                        set_default_shipping=self.request.POST.get("set_default_shipping")
                         if set_default_shipping:
                             shipping_address.default=True
                             shipping_address.save()
                     else: 
                         messages.info(self.request,'Please fill required fields of form')
-               
                 
-                payment_option=form.cleaned_data.get('payment_option')
-                #TODO:Add Function Functionality
-                # saving_info=form.cleaned_data.get('saving_info')
-                # same_shipping_address=form.cleaned_data.get('saving_shipping_address')
-                    payment_info=form.cleaned_data.get('payment_info')
-                    print(street_address,appartment_address,country,zip,payment_option)
-                    billing_address=Address(
-                    user=self.request.user,
-                    street_address=street_address,
-                    appartment_address=appartment_address,
-                    country=country,
-                    zip= zip,
-                    address_type='B'
-                    )
-                billing_address.save()
-                order.address=billing_address
-                order.save()
+                    use_default_billing=self.request.POST.get('use_default_billing')
+                    same_billing_address=self.request.POST.get('same_billing_address')
+                    if same_billing_address:
+                        billing_address=shipping_address
+                        billing_address.pk=None
+                        billing_address.save()
+                        billing_address.address_type='B'
+                        billing_address.save()
+                        order.billing_address=billing_address
+                        order.save()
+                        
+                    elif use_default_billing:
+                        print("using default billing")
+                        address_qs=Address.objects.filter(
+                            user=self.request.user,
+                            address_type='B',
+                            default=True
+                        )
+                        if address_qs.exists():
+                            billing_address=address_qs[0]
+                            order.billing_address=billing_address
+                            order.save()
+                        else:
+                            messages.info(self.request,"No default billing address availabel")
+                            return redirect("check_out")
+                    else:
+                        print("User is entering new billing address")
+
+                        
+                        billing_address1=self.request.POST.get('billing_address1')
+                        billing_address2=self.request.POST.get('billing_address2')
+                        billing_country=self.request.POST.get('billing_country')
+                        billing_zip=self.request.POST.get('billing_zip')
+                        if is_valid_form([billing_address1,billing_address2,billing_country,billing_zip]):
+                            billing_address=Address(
+                            user=self.request.user,
+                            street_address=billing_address1,
+                            appartment_address=billing_address2,
+                            country=billing_country,
+                            zip= billing_zip,
+                            address_type='B'
+                            )
+                            billing_address.save()
+                            order.address=billing_address
+                            order.save()
+                            set_default_shipping=self.request.POST.get("set_default_shipping")
+                            if set_default_shipping:
+                                billing_address.default=True
+                                billing_address.save()
+                        else: 
+                            messages.info(self.request,'Please fill required fields of form')
+                    
+                    payment_option=self.request.POST.get('payment_option')
+                    print(payment_option)
+                    #TODO:Add Function Functionality
+                    # saving_info=form.cleaned_data.get('saving_info')
+                    # same_shipping_address=form.cleaned_data.get('saving_shipping_address')
+                    payment_info=self.request.POST.get('payment_info')
+                #     print(street_address,appartment_address,country,zip,payment_option)
+                #     billing_address=Address(
+                #     user=self.request.user,
+                #     street_address=street_address,
+                #     appartment_address=appartment_address,
+                #     country=country,
+                #     zip= zip,
+                #     address_type='B'
+                #     )
+                # billing_address.save()
+                # order.address=billing_address
+                # order.save()
                 
                 # Checking which payment method has been used and redirecting to that page
                 if payment_option=="R":
@@ -345,11 +402,11 @@ class CheckOutView(View):
                     return redirect("order-summary")
                 # #TODO Redirecting to selected Payment
                 # return redirect("payment")
-                messages.warning(self.request,"Failed Checkout")
-                return redirect("check_out")
-            except ObjectDoesNotExist:
-                messages.success(self.request,"You donot have active order")
-                return redirect("order-summary")
+            messages.warning(self.request,"Failed Checkout")
+            return redirect("check_out")
+        except ObjectDoesNotExist:
+            messages.success(self.request,"You donot have active order")
+            return redirect("order-summary")
         
        
 
@@ -360,7 +417,7 @@ class CheckOutView(View):
 razorpay_client = razorpay.Client(
     auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
 
-
+# @login_required("login")
 def payment(request):
     # print("User:",request.user)
     order=Order.objects.get(user=request.user,ordered=False)
@@ -418,6 +475,7 @@ def payment(request):
 # POST request will be made by Razorpay
 # and it won't have the csrf token.
 @csrf_exempt
+# @login_required("login")
 def paymenthandler(request):
     # only accept POST request.
     if request.method == "POST":
@@ -455,6 +513,7 @@ def paymenthandler(request):
     else:
     # if other than POST request is made.
         return HttpResponseBadRequest()
+
 def get_coupon(request,code):
     try:
         coupon=Coupon.objects.get(code=code)
@@ -462,6 +521,7 @@ def get_coupon(request,code):
     except ObjectDoesNotExist:
         messages.info(request,"This coupon doesnot exist")
         return redirect("check_out")
+# @login_required("login")
 def add_coupon_code(request):
     if request.method=="POST":
         form=CouponForm(request.POST or None)
@@ -479,7 +539,7 @@ def add_coupon_code(request):
                 return redirect("check_out")
     else:
         return render(request,'Ecommerce/order_snippet.html',{'form':CouponForm()})
-class RequestRefundView(View):
+class RequestRefundView(LoginRequiredMixin,View):
     def get(self,*args,**kwargs):
         form=RefundForm()
         context={'form':form}
@@ -507,4 +567,27 @@ class RequestRefundView(View):
                 messages.info(self.request,"This order does not exist")
                 return redirect("request-refund")
 
+def filter_function(request,data=None):
+   
+   
+    if data=="shirt":
+        obj=Item.objects.filter(category="S")
+        print(obj)
+        print(obj)
+        
+    elif data=="sport-wear":
+        obj=Item.objects.filter(category="SW")
+    elif data=="out-wear":
+        obj=Item.objects.filter(category="OW")
+   
+    return render(request,'Ecommerce/home-page.html',{'object_list':obj})
 
+def search(request):
+    if request.method=="GET":
+        data=request.GET.get('data')
+        print(data)
+        obj=Item.objects.filter(Q(title__icontains=data)|Q(description__icontains=data))
+        return render(request,'Ecommerce/home-page.html',{'object_list':obj})
+    return HttpResponse("Not Found")
+
+    

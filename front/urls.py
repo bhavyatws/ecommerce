@@ -8,7 +8,7 @@ urlpatterns = [
     path('', HomeView.as_view(),name="home"),
     path('product/<slug>/', ItemDetailView.as_view(),name="product"),
     path('order-summary', OrderSummary.as_view(),name="order-summary"),
-    path('login/', views.signin,name="login"),
+    path('signin/', views.signin,name="login"),
     path('register/', views.signup,name="signup"),
     path('logout/', views.signout,name="logout"),
     # path('product-detail/<int:pk>/',views.product_detail,name="product_detail"),
@@ -20,4 +20,9 @@ urlpatterns = [
     path('paymenthandler/', views.paymenthandler, name='paymenthandler'),
     path('add-coupon/', views.add_coupon_code, name='add-coupon'),
     path('request-refund/', RequestRefundView.as_view(), name='request-refund'),
+    path('search/', views.search, name='search'),
+    path('filter-shirt/<slug:data>/',  views.filter_function, name='filter-shirt'),
+    path('filter-sport/<slug:data>/',  views.filter_function, name='filter-sport'),
+    path('filter-outwear/<slug:data>/',  views.filter_function, name='filter-outwear'),
+    
 ]
