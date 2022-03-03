@@ -595,7 +595,10 @@ def admin_dashboard(request):
     seven_days_date=[]
     n=0
     while(n<7):
-        last_week=last_week+datetime.timedelta(days=1)
+        if n==0:
+            last_week
+        else:
+            last_week=last_week+datetime.timedelta(days=1)
         seven_days_date.append(last_week)
         last_seven_days_orders=Order.objects.filter(ordered_date=last_week).count()
         seven_days_count.append(last_seven_days_orders)
