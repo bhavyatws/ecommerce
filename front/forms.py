@@ -1,9 +1,12 @@
 
-from email.policy import default
-from logging import PlaceHolder
+
+from dataclasses import field
 from django import forms
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
+from django.forms import ModelForm
+
+from front.models import Item,Order
 PAYMENT_OPTION=(
     ('R','RazorPay'),
     ('P','PayPal')
@@ -55,3 +58,12 @@ class RefundForm(forms.Form):
         'rows':4
     }))
     email=forms.EmailField()
+
+class AddItem(ModelForm):
+   class Meta:
+        model=Item
+        fields = '__all__'
+class OrderStatusUpdate(ModelForm):
+   class Meta:
+        model=Order
+        fields = ['order_status']

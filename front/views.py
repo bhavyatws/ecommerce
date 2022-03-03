@@ -597,8 +597,28 @@ def admin_dashboard(request):
     order_pending=Order.objects.filter(order_status="Pe").count()
     print(order_pending)
     orders=Order.objects.all()
+    total_items=Item.objects.all().count()
     context={'orders':orders,'users':users,'total_ordered':total_ordered,'total_earning':total_earning['amount__sum']
-    ,'order_pending':order_pending}
+    ,'order_pending':order_pending,'total_items':total_items}
     return render(request,'Ecommerce/admin_dashboard.html',context=context)
+def admin_add_item(request):
+    form=AddItem()
+    form=AddItem(request.POST or None,request.FILES)
+    if form.is_valid():
+        form.save()
+        return redirect('admin_dashboard')
+    context={'form':form}
+    return render(request,'Ecommerce/add_admin_item.html',context=context)
+
+def update_order_status(request,pk):
+    type(pk)
+    instance = Order.objects.get(id=pk)
+    form=OrderStatusUpdate(request.POST or None,instance=instance)
+    # if request.method=="POST":
+    if form.is_valid():
+        form.save()
+        return redirect('admin_dashboard')
+    context={'form':form,'pk':pk}
+    return render(request,'Ecommerce/update_order_status.html',context=context)
 
     

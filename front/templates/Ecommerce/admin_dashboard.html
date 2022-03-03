@@ -334,6 +334,18 @@
                     
                 </div>
             </div>
+            <div class="card text-dark bg-white mb-3 mx-3" style="max-width: 18rem;">
+               
+                <div class="card-body">
+                    <h5 class="card-title">
+                        Total Items
+                     </h5>
+                    <p class="card-text mx-5">
+                        <h3>{{total_items}}</h3>
+                    </p>
+                    
+                </div>
+            </div>
         </div>
  
 </main>
@@ -390,30 +402,31 @@ const myChart = new Chart(ctx, {
               <th scope="col">Order ID</th>
               <th scope="col">Item</th>
               <th scope="col">Quantity</th>
-              <th scope="col">Payment Status</th>
+              <th scope="col">Order Date</th>
               <th scope="col">Order Status</th>
+              <th scope="col">Order Status Update</th>
             </tr>
           </thead>
           <tbody>
+            {% for order in orders %}
+            {% for items in order.items.all %}
             <tr>
-              <td>1,001</td>
-              <td>random</td>
-              <td>data</td>
-              <td>placeholder</td>
-              <td>text</td>
+          
+              <td>{{order.id}}</td>
+              <td>{{items.item.title}}</td>
+              <td>{{items.quantity}}</td>
+              <td>{{order.ordered_date}}</td>
+              <td>{{order.get_order_status_display}}</td>
+              <td><a href="{% url 'update-order-status' order.id %}" class="btn btn-warning">Update</a></td>
             </tr>
-            <tr>
-              <td>1,002</td>
-              <td>placeholder</td>
-              <td>irrelevant</td>
-              <td>visual</td>
-              <td>layout</td>
-            </tr>
+            {% endfor %}
+            {% endfor %}
+            
             
           </tbody>
         </table>
         <hr>
-        <button class="btn btn-success">Add Product</button>
+        <a class="btn btn-success" href="{% url 'admin-add-item' %}">Add Product</a>
       </div>
 </div>
 {% else %}
