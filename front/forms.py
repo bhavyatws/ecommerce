@@ -26,7 +26,7 @@ class CheckoutForm(forms.Form):
     shipping_street_address=forms.CharField(required=False)
     shipping_appartment_address=forms.CharField(required=False)
     shipping_country=CountryField( blank_label='(Select Country)').formfield(required=False,widget=CountrySelectWidget(attrs={
-       ' class':"custom-select d-block w-100  "
+       ' class':"custom-select d-block w-100 " 
     }))
     shipping_zip=forms.CharField(required=False)
     set_default_shipping=forms.BooleanField(required=False)

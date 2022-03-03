@@ -22,10 +22,11 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseBadRequest
 from django.db.models import Q
-
+from django.db.models import Sum#for aggregate function
 # Create your views here.
 import random
 import string
+import datetime
 #Creating random generator string function
 def create_ref_code():
     return ''.join(random.choices(string.ascii_lowercase+string.digits,k=20))#k=length
@@ -53,7 +54,6 @@ class OrderSummary(LoginRequiredMixin,View):
         try:
             order=Order.objects.filter(user=self.request.user,ordered=False)
             empty=len(order)
-            print(empty)
             # order.total_amount()
             context={'orders':order,'empty':empty}
             return render(self.request,'Ecommerce/order_summary.html',context)
@@ -68,12 +68,12 @@ def signin(request):
     if request.method == "POST":
         username=request.POST.get("username")
         password=request.POST.get("password")
-        print(username,password)
+        
         user = authenticate(request, username=username, password=password)
-        print(user)
+      
         if user is not None:
             login(request,user)
-            print("Logged in")
+           
             return redirect('/')
             
         else:
@@ -94,7 +94,6 @@ def signup(request):
         fullname=request.POST.get("fullname")
         phone=request.POST.get("phone")
         gender=request.POST.get("radio")
-        print(gender)
         address=request.POST.get("address")
         password1=request.POST.get("password1")
         password2=request.POST.get("password2")
@@ -140,7 +139,6 @@ def add_to_cart(request,slug):
         #checking if the order item is in Order
         if order.items.filter(item__slug=item.slug).exists():
             order_item.quantity+=1
-            print(order_item.quantity)
             order_item.save()
             messages.success(request,"This item's quantity has been updated in your cart")
         else:
@@ -165,17 +163,15 @@ def add_to_cart(request,slug):
     # return render(request,'bootstrap_templates/cart.html',context)
     # return redirect("product",slug=slug)
     return redirect("order-summary")
-# @login_required("login")
+@login_required(login_url="login/")
 def remove_from_cart(request,slug):
     item=get_object_or_404(Item,slug=slug)
     order_query=Order.objects.filter(user=request.user,ordered=False)
     if order_query.exists():
         order=order_query[0]#=> graving that 
-        print(order)
         #checking if the order item is in Item
         if order.items.filter(item__slug=item.slug).exists():
             order_item=OrderItem.objects.filter(item=item,user=request.user,ordered=False)[0] #because it returning tuple
-            print(order_item)
             order.items.remove(order_item)
             
           
@@ -201,13 +197,12 @@ def remove_from_cart(request,slug):
         return redirect("order-summary")
     # return redirect("product",slug=slug)
     return redirect("order-summary")
-# @login_required("login")
+@login_required(login_url="login/")
 def remove_single_item_from_cart(request,slug):
     item=get_object_or_404(Item,slug=slug)
     order_query=Order.objects.filter(user=request.user,ordered=False)
     if order_query.exists():
         order=order_query[0]#=> graving that 
-        print(order)
         #checking if the order item is in Item
         if order.items.filter(item__slug=item.slug).exists():
             order_item=OrderItem.objects.filter(item=item,user=request.user,ordered=False)[0] #because it returning tuple
@@ -375,7 +370,7 @@ class CheckOutView(LoginRequiredMixin,View):
                             messages.info(self.request,'Please fill required fields of form')
                     
                     payment_option=self.request.POST.get('payment_option')
-                    print(payment_option)
+            
                     #TODO:Add Function Functionality
                     # saving_info=form.cleaned_data.get('saving_info')
                     # same_shipping_address=form.cleaned_data.get('saving_shipping_address')
@@ -417,7 +412,7 @@ class CheckOutView(LoginRequiredMixin,View):
 razorpay_client = razorpay.Client(
     auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
 
-# @login_required("login")
+@login_required(login_url="login/")
 def payment(request):
     # print("User:",request.user)
     order=Order.objects.get(user=request.user,ordered=False)
@@ -455,7 +450,6 @@ def payment(request):
         user=request.user,
         amount=order.total_amount(),
     )
-    print(payment)
     payment.save()
     #Working on Order
     order_items=order.items.all()
@@ -475,7 +469,7 @@ def payment(request):
 # POST request will be made by Razorpay
 # and it won't have the csrf token.
 @csrf_exempt
-# @login_required("login")
+@login_required(login_url="login/")
 def paymenthandler(request):
     # only accept POST request.
     if request.method == "POST":
@@ -489,12 +483,12 @@ def paymenthandler(request):
                 'razorpay_signature': signature
             }
 
-            print(params_dict)
+        
 
             # verify the payment signature.
             result = razorpay_client.utility.verify_payment_signature(
                 params_dict)
-            print(result)
+
             if result :
                 # print(result)
                 # amount = 2000
@@ -521,7 +515,7 @@ def get_coupon(request,code):
     except ObjectDoesNotExist:
         messages.info(request,"This coupon doesnot exist")
         return redirect("check_out")
-# @login_required("login")
+@login_required(login_url="login/")
 def add_coupon_code(request):
     if request.method=="POST":
         form=CouponForm(request.POST or None)
@@ -550,7 +544,6 @@ class RequestRefundView(LoginRequiredMixin,View):
             ref_code=form.cleaned_data.get('ref_code')
             message=form.cleaned_data.get('message')
             email=form.cleaned_data.get('email')
-            print(ref_code,message,email)
             try:
                 order=Order.objects.get(ref_code=ref_code)
                 order.refund_requested=True
@@ -566,14 +559,12 @@ class RequestRefundView(LoginRequiredMixin,View):
             except ObjectDoesNotExist:
                 messages.info(self.request,"This order does not exist")
                 return redirect("request-refund")
-
+@login_required(login_url="login/")
 def filter_function(request,data=None):
    
    
     if data=="shirt":
         obj=Item.objects.filter(category="S")
-        print(obj)
-        print(obj)
         
     elif data=="sport-wear":
         obj=Item.objects.filter(category="SW")
@@ -585,22 +576,34 @@ def filter_function(request,data=None):
 def search(request):
     if request.method=="GET":
         data=request.GET.get('data')
-        print(data)
         obj=Item.objects.filter(Q(title__icontains=data)|Q(description__icontains=data))
         return render(request,'Ecommerce/home-page.html',{'object_list':obj})
     return HttpResponse("Not Found")
-from django.db.models import Sum
+
+@login_required(login_url="login/")
 def admin_dashboard(request):
     users=Customer.objects.all().count()
     total_ordered=Order.objects.filter(ordered=True).count()
     total_earning=Payments.objects.all().aggregate(Sum('amount'))
     order_pending=Order.objects.filter(order_status="Pe").count()
-    print(order_pending)
     orders=Order.objects.all()
     total_items=Item.objects.all().count()
+    #Custom logic for fetching first_week graph total order summary
+    today=datetime.datetime.now()
+    last_week=today-datetime.timedelta(days=7)
+    seven_days_count=[]
+    seven_days_date=[]
+    n=0
+    while(n<7):
+        last_week=last_week+datetime.timedelta(days=1)
+        seven_days_date.append(last_week)
+        last_seven_days_orders=Order.objects.filter(ordered_date=last_week).count()
+        seven_days_count.append(last_seven_days_orders)
+        n+=1
     context={'orders':orders,'users':users,'total_ordered':total_ordered,'total_earning':total_earning['amount__sum']
-    ,'order_pending':order_pending,'total_items':total_items}
+    ,'order_pending':order_pending,'total_items':total_items,'seven_days_count':seven_days_count,'seven_days_date':seven_days_date}
     return render(request,'Ecommerce/admin_dashboard.html',context=context)
+@login_required(login_url="login/")
 def admin_add_item(request):
     form=AddItem()
     form=AddItem(request.POST or None,request.FILES)
@@ -609,7 +612,7 @@ def admin_add_item(request):
         return redirect('admin_dashboard')
     context={'form':form}
     return render(request,'Ecommerce/add_admin_item.html',context=context)
-
+@login_required(login_url="login/")
 def update_order_status(request,pk):
     type(pk)
     instance = Order.objects.get(id=pk)

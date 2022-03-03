@@ -351,16 +351,17 @@
 </main>
 {% comment %} Chart Code {% endcomment %}
 <div class="container ">
+  <h3>Graph for First Week</h3>
     <canvas id="myChart" width="300" height="100"></canvas>
 <script>
 const ctx = document.getElementById('myChart').getContext('2d');
 const myChart = new Chart(ctx, {
     type: 'line',
     data: {
-        labels: ['Day1', 'Day2', 'Day3', 'Day4', 'Day5', 'Day6','Day7'],
+        labels: [{% for days in seven_days_date %}'{{days}}',{% endfor %}],
         datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 20,10],
+            label: '#Total Number of Orders',
+            data: [{% for count_of_orders in seven_days_count %}'{{count_of_orders}}',{% endfor %},1,2,3,4,5,6,7],
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
@@ -381,15 +382,20 @@ const myChart = new Chart(ctx, {
         }]
     },
     options: {
+      responsive: true,
+      
+      maintainAspectRatio: true,
         scales: {
             y: {
-                beginAtZero: true
+                beginAtZero: true,
+                stepSize: 1,
             }
+            
         }
     }
 });
 </script>
- 
+
 </div>
 <hr>
 <div class="container mt-3">
