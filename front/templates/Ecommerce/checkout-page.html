@@ -5,17 +5,22 @@
 {% block head %}
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script><script>
-var hideable_shipping_form = $('.hideable_shipping_form');
+
+    var hideable_shipping_form = $('.hideable_shipping_form');
 var hideable_billing_form = $('.hideable_billing_form');
-var use_default_billing = document.querySelector("input[name=use_default_billing]");
-var use_default_shipping = document.querySelector("input[name=use_default_shipping]");
-use_default_billing.addEventListener('change', function() {
-if (this.checked) {
-hideable_billing_form.hide();
-} else {
-hideable_billing_form.show();
-}
-})
+var use_default_billing = document.querySelector("input[name='use_default_billing']");
+var use_default_shipping = document.querySelector('input[name="use_default_shipping"]');
+console.log(use_default_shipping)
+if (use_default_billing){
+    use_default_billing.addEventListener('change', function() {
+    if (this.checked) {
+    hideable_billing_form.hide();
+    } else {
+    hideable_billing_form.show();
+    }
+    })}
+
+if (use_default_billing){
 use_default_shipping.addEventListener('change', function() {
     if (this.checked) {
     hideable_shipping_form.hide();
@@ -23,7 +28,8 @@ use_default_shipping.addEventListener('change', function() {
     hideable_shipping_form.show();
     }
     })
-   
+}
+
     </script>
     <meta charset="utf-8">
     <meta name="viewport"
@@ -39,7 +45,7 @@ use_default_shipping.addEventListener('change', function() {
     <link href="{% static 'css/mdb.min.css' %}" rel="stylesheet">
     <!-- Your custom styles (optional) -->
     <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
-    <link href="{% static 'flags/flags.css' %}" rel="stylesheet">
+  
 {% endblock head %}
 {% block body %}
     <!-- Navbar -->

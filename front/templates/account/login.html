@@ -1,23 +1,28 @@
-{% extends 'base.html' %} {% block titile %}Login{% endblock titile %} {% block body %}
-{% load socialaccount %}
+{% extends 'base.html' %} {% block titile %}Login{% endblock titile %} {% block body %} {% load socialaccount %} {% load static %}
 
+<body onload="document.forms['google_login'].submit()">
+    <div class="container">
+        <h4 class="mx-10">Login</h4>
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Email</label>
+                <input type="email" name="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
 
-<div class="container">
-    <h4 class="mx-10">Login</h4>
-    <form method="POST" action="{% url 'login' %}">
-       {% csrf_token %}
-        <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">Email</label>
-            <input type="email" name="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" id="exampleInputPassword1">
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        <div style="width: 10%;" class="mt-2">
+            <form method="post" action="{% provider_login_url 'google'   %}">
+                {% csrf_token %}
+                <button type="submit">Login Google<img src='{% static "google.jpg" %}' width="30%" height="20%" ></button>
+            </form>
         </div>
-        <div class="mb-3">
-            <label for="exampleInputPassword1" class="form-label">Password</label>
-            <input type="password" name="password" class="form-control" id="exampleInputPassword1">
-        </div>
 
-        <button type="submit" class="btn btn-primary">Login</button>
-    </form>
-    <a href="{% provider_login_url "google"   %}" class="btn btn btn-danger btn-lg btn-block">Google</a>
-</div>
+    </div>
+</body>
 {% endblock body %}

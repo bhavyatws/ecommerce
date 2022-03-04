@@ -119,15 +119,19 @@ class OrderItem(models.Model):
         totalprice=self.item.price * self.quantity
         return totalprice
     def get_total_item_discount_price(self):
-        totalprice=self.item.discount_price * self.quantity
-        return totalprice
+        if self.item.discount_price:
+            totalprice=self.item.discount_price * self.quantity
+            return totalprice
+        else:
+            return self.get_total_item_price()
     def get_saved_amount(self):
         total_amount=self.get_total_item_price() - self.get_total_item_discount_price()
         return total_amount
     def get_final_price(self):
-        if self.item.discount_price:
+        if self.get_total_item_discount_price():
             return self.get_total_item_discount_price()
-        return self.get_total_item_price
+        return self.get_total_item_price()
+ 
     
 class Order(models.Model):
     user=models.ForeignKey(Customer,on_delete=models.CASCADE)
@@ -147,6 +151,7 @@ class Order(models.Model):
     refund_granted=models.BooleanField(default=False)
     def __str__(self):
         return self.user.username
+    
     def total_amount(self):
         total=0
         for order_item in self.items.all():

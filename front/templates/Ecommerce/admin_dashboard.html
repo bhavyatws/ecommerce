@@ -351,7 +351,7 @@
 </main>
 {% comment %} Chart Code {% endcomment %}
 <div class="container ">
-  <h3>Graph for First Week</h3>
+  <h3>Graph for Last Week</h3>
     <canvas id="myChart" width="300" height="100"></canvas>
 <script>
 const ctx = document.getElementById('myChart').getContext('2d');
@@ -396,6 +396,38 @@ const myChart = new Chart(ctx, {
 });
 </script>
 
+</div>
+<hr>
+<div class="container">
+  <h3>Last Week Earning</h3>
+  <canvas id="myAnotherChart"></canvas>
+  <script>
+    const labels = [
+    {% for days in seven_days_date %}'{{days}}',{% endfor %}
+    ];
+  
+    const data = {
+      labels: labels,
+      datasets: [{
+        label: 'Last Week Earning in Rs.',
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)',
+        data: [{% for payments in seven_days_earning %}{{payments}},{% endfor %}],
+      }]
+    };
+  
+    const config = {
+      type: 'bar',
+      data: data,
+      options: {}
+    };
+  </script>
+  <script>
+    const myAnotherChart = new Chart(
+      document.getElementById('myAnotherChart'),
+      config
+    );
+  </script>  
 </div>
 <hr>
 <div class="container mt-3">
