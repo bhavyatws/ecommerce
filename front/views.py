@@ -42,11 +42,11 @@ def create_ref_code():
 class HomeView(LoginRequiredMixin,ListView):
     model=Item
     paginate_by=5
-    template_name='ecommerce/home-page.html'
+    template_name='Ecommerce/home-page.html'
 
 class ItemDetailView(LoginRequiredMixin,DetailView):
     model=Item
-    template_name='ecommerce/product-page.html'
+    template_name='Ecommerce/product-page.html'
 
 class OrderSummary(LoginRequiredMixin,View):
     
