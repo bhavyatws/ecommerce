@@ -81,7 +81,7 @@ def signin(request):
         
 
     return render(request,'login.html')
-# @login_required('login')   
+@login_required(login_url='login/')   
 def signout(request):
     logout(request)
     messages.success(request,"Successfully logout")
@@ -103,31 +103,8 @@ def signup(request):
     
     return render(request,'register.html')
 
-# def product_detail(request,pk):
-#     query=Product.objects.filter(id=pk)
-#     if query.exists():
-#         query=Product.objects.get(id=pk)
-#         context={'query':query}
-#         return render(request,'ecommerce/product-page.html',context)
-#     else:
-#         return redirect('/')
-def buy_now(request):#checkout
-    pass
-# def add_to_cart(request,pk):
-#     user=request.user
-#     prod_id=request.GET.get('prod_id')
-#     print(user,prod_id)
-#     cart=Cart(user=user)
-#     cart.save()
-#     # prod=Product.objects.all()
-#     # prod=prod.prod_id
-#     cart.prod.add(prod_id)
-#     user=request.user
-#     query=Cart.objects.filter(user=user)
-    
-#     context={'query':query}
-#     return render(request,'bootstrap_templates/cart.html',context)
-# @login_required("login")
+
+@login_required(login_url="login/")
 def add_to_cart(request,slug):
     item=get_object_or_404(Item,slug=slug)
     order_item,created=OrderItem.objects.get_or_create(item=item,
@@ -150,18 +127,7 @@ def add_to_cart(request,slug):
         order.save()
         order.items.add(order_item)
         messages.success(request,"This item has been added to your cart")
-    # prod_id=request.GET.get('prod_id')
-    # print(user,prod_id)
-    # cart=Cart(user=user)
-    # cart.save()
-    # prod=Product.objects.all()
-    # prod=prod.prod_id
-    # cart.prod.add(prod_id)
-    # user=request.user
-    # query=Cart.objects.filter(user=user)
-    # context={'query':query}
-    # return render(request,'bootstrap_templates/cart.html',context)
-    # return redirect("product",slug=slug)
+  
     return redirect("order-summary")
 @login_required(login_url="login/")
 def remove_from_cart(request,slug):
@@ -469,7 +435,6 @@ def payment(request):
 # POST request will be made by Razorpay
 # and it won't have the csrf token.
 @csrf_exempt
-@login_required(login_url="login/")
 def paymenthandler(request):
     # only accept POST request.
     if request.method == "POST":
@@ -498,6 +463,7 @@ def paymenthandler(request):
                 # capture the payemt
                 # razorpay_client.payment.capture(payment_id, amount)
                 order=Order.objects.get(user=request.user,ordered=False)
+                print(request.user)
                 payment=Payments(
                 razorpay_id= razorpay_order_id,
                 user=request.user,
@@ -602,8 +568,10 @@ def search(request):
 def admin_dashboard(request):
     users=Customer.objects.all().count()
     total_ordered=Order.objects.filter(ordered=True).count()
-    total_earning=Payments.objects.all().aggregate(Sum('amount'))
+    total_earnings=Payments.objects.aggregate(Sum('amount'))
+    print(total_earnings['amount__sum'])
     order_pending=Order.objects.filter(order_status="Pe").count()
+    order_delivered=Order.objects.filter(order_status="D").count()
     orders=Order.objects.all()
     total_items=Item.objects.all().count()
     #Custom logic for fetching first_week graph total order summary
@@ -612,6 +580,7 @@ def admin_dashboard(request):
     seven_days_count=[]
     seven_days_date=[]
     seven_days_earning=[]
+    seven_days_record=[]
     n=0
     while(n<8):
         if n==0:
@@ -628,6 +597,7 @@ def admin_dashboard(request):
         total_earning=payment.aggregate(Sum('amount'))
         if total_earning['amount__sum']:
             seven_days_earning.append(total_earning['amount__sum'])
+            seven_days_record.append(last_week)
         for payment in payment:
             print(payment.timestamp.date())
         # for ordr in last_seven_days_orders:
@@ -640,9 +610,9 @@ def admin_dashboard(request):
         seven_days_count.append(last_seven_days_orders_count)
         n+=1
     print(seven_days_earning)
-    context={'orders':orders,'users':users,'total_ordered':total_ordered,'total_earning':total_earning['amount__sum']
+    context={'orders':orders,'users':users,'total_ordered':total_ordered,'total_earnings':total_earnings['amount__sum']
     ,'order_pending':order_pending,'total_items':total_items,'seven_days_count':seven_days_count,'seven_days_date':seven_days_date,
-    'seven_days_earning':seven_days_earning}
+    'seven_days_earning':seven_days_earning,'seven_days_record':seven_days_record,'order_delivered':order_delivered}
     return render(request,'Ecommerce/admin_dashboard.html',context=context)
 @login_required(login_url="login/")
 def admin_add_item(request):

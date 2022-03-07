@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+import django_heroku
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-nw93-^vr_5@8047+b%peuy_$#5b%5h*b38_a1rkc+((m3r3#q+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'front',
     'crispy_forms',
+    "django_extensions",
+    'django_werkzeug',
      # The following apps are required:
    
     
@@ -49,6 +52,8 @@ INSTALLED_APPS = [
      # ... include the providers you want to enable:
    
      'allauth.socialaccount.providers.google',
+      'allauth.socialaccount.providers.facebook',
+      'allauth.socialaccount.providers.github',
     
 ]
 AUTHENTICATION_BACKENDS = [
@@ -149,7 +154,7 @@ MEDIA_ROOT=BASE_DIR/'media'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-SITE_ID = 1
+SITE_ID = 2
 
 # Provider specific settings
 SOCIALACCOUNT_PROVIDERS = {
@@ -163,10 +168,41 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online',
            
         }
+    },
+     'facebook': {
+        'METHOD': 'oauth2',
+        'SDK_URL': '//connect.facebook.net/{locale}/sdk.js',
+        'SCOPE': ['email', 'public_profile'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'first_name',
+            'last_name',
+            'middle_name',
+            'name',
+            'name_format',
+            'picture',
+            'short_name'
+        ],
+        'EXCHANGE_TOKEN': True,
+        'LOCALE_FUNC': 'path.to.callable',
+        'VERIFIED_EMAIL': False,
+        'VERSION': 'v7.0',
+    },
+    'github': {
+        'SCOPE': [
+            'user',
+            'repo',
+            'read:org',
+        ],
     }
 }
 LOGIN_REDIRECT_URL = '/'
 RAZOR_KEY_ID="rzp_test_uNksGLo7QUq10I"
 RAZOR_KEY_SECRET="Kh4LjJ5TZYm5GWCOVcxhkNsJ"
-
-
+# ACCOUNT_DEFAULT_HTTP_PROTOCAL="https"
+# CSRF_TRUSTED_ORIGINS = ['https://front.bluemix.net',
+# ' https://986d-175-176-184-243.ngrok']
+# ACCOUNT_AUTHENTICATION_METHOD='username_email'
+django_heroku.settings(locals())
