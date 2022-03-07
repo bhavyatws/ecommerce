@@ -411,22 +411,22 @@ def payment(request):
     context['phone']=order.user.phone
     
 
-    # payment=Payments(
-    #     razorpay_id=razorpay_order['id'],
-    #     user=request.user,
-    #     amount=order.total_amount(),
-    # )
-    # payment.save()
-    # #Working on Order
-    # order_items=order.items.all()
-    # order_items.update(ordered=True)
-    # for item in order_items:
-    #     item.save()
-    # order.ordered=True
-    # order.ref_code=create_ref_code()
-    # order.payment_detail=payment
-    # order.save()
-
+    payment=Payments(
+        razorpay_id=razorpay_order['id'],
+        user=request.user,
+        amount=order.total_amount(),
+    )
+    payment.save()
+    #Working on Order
+    order_items=order.items.all()
+    order_items.update(ordered=True)
+    for item in order_items:
+        item.save()
+    order.ordered=True
+    order.ref_code=create_ref_code()
+    order.payment_detail=payment
+    order.save()
+    messages.success(request,"Your order was successful")
     
     return render(request, 'Ecommerce/payment.html', context=context)
 
@@ -462,25 +462,25 @@ def paymenthandler(request):
 
                 # capture the payemt
                 # razorpay_client.payment.capture(payment_id, amount)
-                order=Order.objects.get(user=request.user,ordered=False)
-                print(request.user)
-                payment=Payments(
-                razorpay_id= razorpay_order_id,
-                user=request.user,
-                amount=order.total_amount(),
-                )
-                payment.save()
+                # order=Order.objects.get(user=request.user,ordered=False)
+                # print(request.user)
+                # payment=Payments(
+                # razorpay_id= razorpay_order_id,
+                # user=request.user,
+                # amount=order.total_amount(),
+                # )
+                # payment.save()
              
-                #Working on Order
-                order_items=order.items.all()
-                order_items.update(ordered=True)
-                for item in order_items:
-                    item.save()
-                order.ordered=True
-                order.ref_code=create_ref_code()
-                order.payment_detail=payment
-                order.save()
-                messages.success(request,"Your order was successful")
+                # #Working on Order
+                # order_items=order.items.all()
+                # order_items.update(ordered=True)
+                # for item in order_items:
+                #     item.save()
+                # order.ordered=True
+                # order.ref_code=create_ref_code()
+                # order.payment_detail=payment
+                # order.save()
+                # messages.success(request,"Your order was successful")
                 
                 # render success page on successful caputre of payment
                 return render(request, 'Ecommerce/payment_success.html')
