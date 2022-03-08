@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+load_dotenv()
 import django_heroku
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -200,8 +202,8 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 LOGIN_REDIRECT_URL = '/'
-RAZOR_KEY_ID="rzp_test_uNksGLo7QUq10I"
-RAZOR_KEY_SECRET="Kh4LjJ5TZYm5GWCOVcxhkNsJ"
+RAZOR_KEY_ID=os.getenv('RAZOR_KEY_ID')
+RAZOR_KEY_SECRET=os.getenv('RAZOR_KEY_SECRET')
 # ACCOUNT_DEFAULT_HTTP_PROTOCAL="https"
 # CSRF_TRUSTED_ORIGINS = ['https://front.bluemix.net',
 # ' https://986d-175-176-184-243.ngrok']

@@ -15,8 +15,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import *
-import stripe 
-stripe.api_key = "sk_test_51KTl3sSJeQrNghIMiMkC9YcSyEGnDxbhOSMqguGCKmmrnLSN687jOmk4BMceacc09u4OnhMBm7toqpRDhSC6UZaX005lWtQnsN"
 import razorpay
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
