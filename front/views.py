@@ -474,7 +474,7 @@ def paymenthandler(request):
                     order.ordered=True
                     print(order.payment_detail.paid)
                     order.payment_detail.paid=True
-                    order.payment_detail.save()
+                    order.payment_detail.save()#saving payment detail by assigning True
                     print(order.payment_detail.paid)
                     order.ref_code=create_ref_code()
                     order.ordered = True

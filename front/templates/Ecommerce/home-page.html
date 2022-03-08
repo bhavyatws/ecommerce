@@ -108,6 +108,17 @@
               target="_blank">
               {{request.user.first_name}}
             </a>
+            <div class="container">
+              {% if messages %}
+              {% for message in messages %}
+              <div class="alert alert-success alert-dismissible mt-3 " role="alert">
+                <span type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></span>
+                <strong>{{message}}</strong> 
+              </div>
+              
+              {% endfor %}
+              
+              {% endif %}
           </li>
           <li class="nav-item mx-1">
             <a href="{% url 'logout' %}" class="nav-link border border-light rounded waves-effect"
