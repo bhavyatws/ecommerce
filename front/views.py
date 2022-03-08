@@ -612,7 +612,8 @@ def admin_dashboard(request):
    
     context={'orders':orders,'users':users,'total_ordered':total_ordered,'total_earnings':total_earnings['amount__sum']
     ,'order_pending':order_pending,'total_items':total_items,'seven_days_count':seven_days_count,'seven_days_date':seven_days_date,
-    'seven_days_earning':seven_days_earning,'seven_days_record':seven_days_record,'order_delivered':order_delivered,'order_payment_done':order_payment_done}
+    'seven_days_earning':seven_days_earning,'seven_days_record':seven_days_record,'order_delivered':order_delivered,'order_payment_done':order_payment_done
+    ,'payment':payment}
     return render(request,'Ecommerce/admin_dashboard.html',context=context)
 @login_required(login_url="login/")
 def admin_add_item(request):
@@ -636,12 +637,13 @@ def update_order_status(request,pk):
 @login_required(login_url="login/")
 def update_payment_status(request,pk):
     instance = Payments.objects.get(id=pk)
+    print(instance.id)
     form=PaymentStatusUpdate(request.POST or None,instance=instance)
     # if request.method=="POST":
     if form.is_valid():
         form.save()
         return redirect('admin_dashboard')
-    context={'form':form,'pk':pk}
+    context={'form':form,'instance':instance}
     return render(request,'Ecommerce/update_payment_status.html',context=context)
 
     
