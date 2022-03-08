@@ -415,6 +415,7 @@ def payment(request):
     payment.save()
     order.payment_detail = payment
     order.save()
+    
     messages.success(request,"Your order was successful")
     
     return render(request, 'Ecommerce/payment.html', context=context)
@@ -455,7 +456,7 @@ def paymenthandler(request):
                 
                 order=Order.objects.get(payment_detail__razorpay_id=razorpay_order_id,ordered=False)
                 # print("payment Handler:",order)
-                print(order.payment_detail.razorpay_id)
+                print(order.payment_detail.paid)
                 # print(request.user)
                 # payment=Payments(
                 # razorpay_id= razorpay_order_id,
@@ -471,7 +472,10 @@ def paymenthandler(request):
                     for item in order_items:
                         item.save()
                     order.ordered=True
+                    print(order.payment_detail.paid)
                     order.payment_detail.paid=True
+                    order.payment_detail.save()
+                    print(order.payment_detail.paid)
                     order.ref_code=create_ref_code()
                     order.ordered = True
                     order.save()
