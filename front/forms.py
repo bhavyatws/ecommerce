@@ -1,16 +1,23 @@
 
 
-from dataclasses import field
+
+from ast import Mod
 from django import forms
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
 from django.forms import ModelForm
+from razorpay import Payment
 
-from front.models import Item,Order
+from front.models import Item,Order, Payments
 PAYMENT_OPTION=(
     ('R','RazorPay'),
     ('P','PayPal')
 )
+PAYMENT_STATUS=(
+    ('True','Paid'),
+    ('False','Not Paid')
+)
+
 # countries_flag_url='//flags.example.com/{code}.png',
 class CheckoutForm1(forms.Form):
     street_address=forms.CharField(widget=forms.TextInput(attrs={'placeholder':'123 Main Street'}))
@@ -58,12 +65,19 @@ class RefundForm(forms.Form):
         'rows':4
     }))
     email=forms.EmailField()
-
+# from betterforms.multiform import MultiModelForm
 class AddItem(ModelForm):
    class Meta:
         model=Item
         fields = '__all__'
 class OrderStatusUpdate(ModelForm):
-   class Meta:
+
+    class Meta:
         model=Order
         fields = ['order_status']
+    
+       
+class PaymentStatusUpdate(ModelForm):
+   class Meta:
+        model=Payments
+        fields = ['paid']

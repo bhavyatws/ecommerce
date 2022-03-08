@@ -27,6 +27,7 @@
         <div style="width: 10%;" class="mt-2">
             <form method="post" action="{% provider_login_url 'facebook'  %}">
                 {% csrf_token %}
+                
                 <button type="submit">facebook<img src='{% static "facebook.png" %}' width="30%" height="20%" ></button>
             </form>
         </div>

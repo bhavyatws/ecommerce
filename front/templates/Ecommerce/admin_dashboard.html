@@ -322,6 +322,20 @@
                     
                 </div>
             </div>
+            <div class="card text-white bg-danger mb-3 mx-3" style="max-width: 18rem;">
+               
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <br>
+                       
+                        Payment Done
+                    </h5>
+                    <p class="card-text mx-5">
+                        <h3>{{order_payment_done}}</h3>
+                    </p>
+                    
+                </div>
+            </div>
             <div class="card text-white bg-warning mb-3" style="max-width: 18rem;">
                
                 <div class="card-body">
@@ -454,7 +468,9 @@ const myChart = new Chart(ctx, {
               <th scope="col">Quantity</th>
               <th scope="col">Order Date</th>
               <th scope="col">Order Status</th>
-              <th scope="col">Order Status Update</th>
+              <th scope="col">Payment Status</th>
+               <th scope="col">Order Status Update</th>
+               <th scope="col">Payment Status Update</th>
             </tr>
           </thead>
           <tbody>
@@ -466,6 +482,8 @@ const myChart = new Chart(ctx, {
               <td>{{items.item.title}}</td>
               <td>{{items.quantity}}</td>
               <td>{{order.ordered_date}}</td>
+             
+              
               {% if order.order_status == 'D' %}
            
               <td class="btn btn-success">{{order.get_order_status_display}}</td>
@@ -473,7 +491,10 @@ const myChart = new Chart(ctx, {
            
               <td >{{order.get_order_status_display}}</td>
               {% endif %}
-              <td><a href="{% url 'update-order-status' order.id %}" class="btn btn-warning">Update</a></td>
+              <td>{% if order.payment_detail.paid %}<span class="btn btn-success">Paid</span>{% else %}<span class="btn btn-danger">Not Paid</span>{% endif %}
+                </td>
+              <td><a href="{% url 'update-order-status' order.id %}" class="btn btn-secondary">Update</a></td>
+              <td><a href="{% url 'update-payment-status' order.id %}" class="btn btn-primary">Payment Update</a></td>
             </tr>
             {% endfor %}
             {% endfor %}

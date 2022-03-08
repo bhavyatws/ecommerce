@@ -139,7 +139,7 @@ class Order(models.Model):
     items=models.ManyToManyField(OrderItem)
     start_date = models.DateTimeField(auto_now_add=True)
     ordered_date=models.DateField()
-    ordered=models.BooleanField(default=False)
+    ordered=models.BooleanField(default=False)#it check whether has been ordered or not
     billing_address=models.ForeignKey('Address',related_name='billing_address',on_delete=models.SET_NULL,blank=True,null=True)
     shipping_address=models.ForeignKey('Address',related_name='shipping_address',on_delete=models.SET_NULL,blank=True,null=True)
     payment_detail=models.ForeignKey('Payments',on_delete=models.SET_NULL,blank=True,null=True)
@@ -178,6 +178,7 @@ class Payments(models.Model):
     user=models.ForeignKey(Customer,on_delete=models.SET_NULL,null=True,blank=True)
     amount=models.FloatField()
     timestamp=models.DateTimeField(auto_now_add=True)
+    paid = models.BooleanField(default=False)#it check payment
     def __str__(self):
         return self.user.username
 

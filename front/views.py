@@ -407,22 +407,13 @@ def payment(request):
     context['email']=order.user.username
     context['name']=order.user.first_name
     context['phone']=order.user.phone
-    
-
     payment=Payments(
         razorpay_id=razorpay_order['id'],
         user=request.user,
         amount=order.total_amount(),
     )
     payment.save()
-    #Working on Order
-    order_items=order.items.all()
-    order_items.update(ordered=True)
-    for item in order_items:
-        item.save()
-    order.ordered=True
-    order.ref_code=create_ref_code()
-    order.payment_detail=payment
+    order.payment_detail = payment
     order.save()
     messages.success(request,"Your order was successful")
     
@@ -460,7 +451,11 @@ def paymenthandler(request):
 
                 # capture the payemt
                 # razorpay_client.payment.capture(payment_id, amount)
-                # order=Order.objects.get(user=request.user,ordered=False)
+
+                
+                order=Order.objects.get(payment_detail__razorpay_id=razorpay_order_id,ordered=False)
+                # print("payment Handler:",order)
+                print(order.payment_detail.razorpay_id)
                 # print(request.user)
                 # payment=Payments(
                 # razorpay_id= razorpay_order_id,
@@ -468,17 +463,21 @@ def paymenthandler(request):
                 # amount=order.total_amount(),
                 # )
                 # payment.save()
-             
+
                 # #Working on Order
-                # order_items=order.items.all()
-                # order_items.update(ordered=True)
-                # for item in order_items:
-                #     item.save()
-                # order.ordered=True
-                # order.ref_code=create_ref_code()
-                # order.payment_detail=payment
-                # order.save()
-                # messages.success(request,"Your order was successful")
+                if order:
+                    order_items=order.items.all()
+                    order_items.update(ordered=True)
+                    for item in order_items:
+                        item.save()
+                    order.ordered=True
+                    order.payment_detail.paid=True
+                    order.ref_code=create_ref_code()
+                    order.ordered = True
+                    order.save()
+                    messages.success(request,"Your order was successful")
+                else: 
+                    return redirect('payment')
                 
                 # render success page on successful caputre of payment
                 return render(request, 'Ecommerce/payment_success.html')
@@ -570,6 +569,7 @@ def admin_dashboard(request):
     print(total_earnings['amount__sum'])
     order_pending=Order.objects.filter(order_status="Pe").count()
     order_delivered=Order.objects.filter(order_status="D").count()
+    order_payment_done=Order.objects.filter(payment_detail__paid=True).count()
     orders=Order.objects.all()
     total_items=Item.objects.all().count()
     #Custom logic for fetching first_week graph total order summary
@@ -590,14 +590,12 @@ def admin_dashboard(request):
         last_seven_days_orders_count=last_seven_days_orders.count()
         #Calculating total Rs. Earned in Last Week
         payment=Payments.objects.filter(timestamp__date=last_week.date())
-        if payment:
-            print("Query Working Fine")
         total_earning=payment.aggregate(Sum('amount'))
         if total_earning['amount__sum']:
             seven_days_earning.append(total_earning['amount__sum'])
             seven_days_record.append(last_week)
-        for payment in payment:
-            print(payment.timestamp.date())
+        # for payment in payment:
+        #     print(payment.timestamp.date())
         # for ordr in last_seven_days_orders:
         #     print(ordr.payment_detail)
         #     if ordr.ordered==True:
@@ -607,10 +605,10 @@ def admin_dashboard(request):
     
         seven_days_count.append(last_seven_days_orders_count)
         n+=1
-    print(seven_days_earning)
+   
     context={'orders':orders,'users':users,'total_ordered':total_ordered,'total_earnings':total_earnings['amount__sum']
     ,'order_pending':order_pending,'total_items':total_items,'seven_days_count':seven_days_count,'seven_days_date':seven_days_date,
-    'seven_days_earning':seven_days_earning,'seven_days_record':seven_days_record,'order_delivered':order_delivered}
+    'seven_days_earning':seven_days_earning,'seven_days_record':seven_days_record,'order_delivered':order_delivered,'order_payment_done':order_payment_done}
     return render(request,'Ecommerce/admin_dashboard.html',context=context)
 @login_required(login_url="login/")
 def admin_add_item(request):
@@ -631,5 +629,15 @@ def update_order_status(request,pk):
         return redirect('admin_dashboard')
     context={'form':form,'pk':pk}
     return render(request,'Ecommerce/update_order_status.html',context=context)
+@login_required(login_url="login/")
+def update_payment_status(request,pk):
+    instance = Payments.objects.get(id=pk)
+    form=PaymentStatusUpdate(request.POST or None,instance=instance)
+    # if request.method=="POST":
+    if form.is_valid():
+        form.save()
+        return redirect('admin_dashboard')
+    context={'form':form,'pk':pk}
+    return render(request,'Ecommerce/update_payment_status.html',context=context)
 
     
