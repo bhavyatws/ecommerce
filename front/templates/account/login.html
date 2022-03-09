@@ -2,8 +2,8 @@
 
 <body onload="document.forms['google_login'].submit()">
     <div class="container">
-        <h4 class="mx-10">Login</h4>
-        <form method="POST" action="{% url 'login' %}">
+        <h4 class="mx-10 mt-2">Login</h4>
+        {% comment %} <form method="POST" action="{% url 'account_login' %}">
             {% csrf_token %}
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Email</label>
@@ -15,10 +15,18 @@
             </div>
             <button type="submit" class="btn btn-success">Login</button>
             <a class="btn btn-primary" href="{% url 'signup' %}">Register</a>
-        </form>
-    
-    </div>
-        <div style="width: 10%;" class="mt-2">
+        </form> {% endcomment %}
+        <form class="login" method="POST" action="{% url 'account_login' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+           
+            <button class="primaryAction btn btn-success" type="submit" >Login</button>
+            <a class="btn btn-primary" href="{% url 'signup' %}">Register</a>
+          </form>
+          <div style="width: 10%;" class="mt-2">
             <form method="post" action="{% provider_login_url 'google'   %}">
                 {% csrf_token %}
                 <button type="submit">Login Google<img src='{% static "google.jpg" %}' width="30%" height="20%" ></button>
@@ -37,6 +45,8 @@
                 <button type="submit">Github<img src='{% static "github.png" %}' width="30%" height="20%" ></button>
             </form>
         </div>
+    </div>
+        
         
        
     </div>

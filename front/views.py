@@ -37,12 +37,12 @@ def create_ref_code():
 #     context={'shirt':shirt,'sport_wear':sport_wear,'out_wear':out_wear,'item':item}
 #     return render(request,'ecommerce/home-page.html',context)
 
-class HomeView(LoginRequiredMixin,ListView):
+class HomeView(ListView):
     model=Item
     paginate_by=5
     template_name='Ecommerce/home-page.html'
 
-class ItemDetailView(LoginRequiredMixin,DetailView):
+class ItemDetailView(DetailView):
     model=Item
     template_name='Ecommerce/product-page.html'
 
@@ -380,8 +380,6 @@ razorpay_client = razorpay.Client(
 def payment(request):
     # print("User:",request.user)
     order=Order.objects.get(user=request.user,ordered=False)
-   
-    print(order.id)
     currency ='INR'
     amount = order.total_amount() * 100# 1Rs=100Paisa
 # Create a Razorpay Order
@@ -637,7 +635,7 @@ def update_order_status(request,pk):
 @login_required(login_url="login/")
 def update_payment_status(request,pk):
     instance = Payments.objects.get(id=pk)
-    
+
     print(instance.id)
     form=PaymentStatusUpdate(request.POST or None,instance=instance)
     # if request.method=="POST":

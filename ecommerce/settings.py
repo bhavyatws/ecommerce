@@ -207,7 +207,7 @@ RAZOR_KEY_SECRET=os.getenv('RAZOR_KEY_SECRET')
 # ACCOUNT_DEFAULT_HTTP_PROTOCAL="https"
 # CSRF_TRUSTED_ORIGINS = ['https://front.bluemix.net',
 # ' https://986d-175-176-184-243.ngrok']
-# ACCOUNT_AUTHENTICATION_METHOD='username_email'
+ACCOUNT_AUTHENTICATION_METHOD='username_email'
 django_heroku.settings(locals())
 CSRF_TRUSTED_ORIGINS=['https://d765-175-176-184-243.ngrok.io']
 

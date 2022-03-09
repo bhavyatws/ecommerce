@@ -121,7 +121,7 @@
               {% endif %}
           </li>
           <li class="nav-item mx-1">
-            <a href="{% url 'logout' %}" class="nav-link border border-light rounded waves-effect"
+            <a href="{% url 'account_logout' %}" class="nav-link border border-light rounded waves-effect"
               target="_blank">
               Logout
             </a>
@@ -148,7 +148,9 @@
           </li>
          
           {% endif %}
-          
+          {% if user.is_authenticated %}
+ 
+         
           <li class="nav-item">
             <a href="{% url 'order-summary' %}" class="nav-link waves-effect">
               <span class="badge red z-depth-1 mr-1"> {{request.user|cart_item_count}} </span>
@@ -156,7 +158,7 @@
               <span class="clearfix d-none d-sm-inline-block"> Cart </span>
             </a>
           </li>
-          
+          {% endif %}
         </ul>
 
       </div>

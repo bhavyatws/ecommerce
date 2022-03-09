@@ -1,0 +1,24 @@
+{% extends 'base.html' %} {% block titile %}Logout{% endblock titile %} {% block body %} {% load socialaccount %} {% load static %}
+
+
+    <div class="container">
+        <h4 class="mx-10 mt-2">Logout</h4>
+        <form method="post" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+            {% endif %}
+            <h3>Are you sure want to logout?</h3>
+            <button type="submit">Logout</button>
+        </form>
+        <a class="btn btn-success mt-2" href="{% url 'home' %}">Back Home </a>
+          
+    </div>
+        
+        
+       
+ 
+    
+
+
+{% endblock body %}
