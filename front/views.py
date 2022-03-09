@@ -637,6 +637,7 @@ def update_order_status(request,pk):
 @login_required(login_url="login/")
 def update_payment_status(request,pk):
     instance = Payments.objects.get(id=pk)
+    
     print(instance.id)
     form=PaymentStatusUpdate(request.POST or None,instance=instance)
     # if request.method=="POST":
