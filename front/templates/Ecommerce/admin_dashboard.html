@@ -475,6 +475,7 @@ const myChart = new Chart(ctx, {
           </thead>
           <tbody>
             {% for order in orders %}
+            
             {% for items in order.items.all %}
             <tr>
           
