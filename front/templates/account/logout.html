@@ -2,7 +2,7 @@
 
 
     <div class="container">
-        <h4 class="mx-10 mt-2">Logout</h4>
+       
         <form method="post" action="{% url 'account_logout' %}">
             {% csrf_token %}
             {% if redirect_field_value %}
