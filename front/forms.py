@@ -81,3 +81,24 @@ class PaymentStatusUpdate(ModelForm):
    class Meta:
         model=Payments
         fields = ['paid']
+
+#Customizing django allauth login form
+'''# yourapp/forms.py
+
+from allauth.account.forms import LoginForm
+
+class YourLoginForm(LoginForm):
+    def __init__(self, *args, **kwargs):
+        super(YourLoginForm, self).__init__(*args, **kwargs)
+        self.fields['login'].widget = forms.TextInput(attrs={'type': 'email', 'class': 'yourclass'})
+        self.fields['password'].widget = forms.PasswordInput(attrs={'class': 'yourclass'})
+
+'''
+from allauth.account.forms import LoginForm
+
+class DjangoAllAuthLoginForm(LoginForm):
+    def __init__(self, *args, **kwargs):
+        super(DjangoAllAuthLoginForm, self).__init__(*args, **kwargs)
+        self.fields['login'].widget = forms.TextInput(attrs={'type': 'email', 'class': 'form-control','placeholder':'Enter Email or Username'})
+        self.fields["login"].label = "Username or Email"#changing login label to username or email in form
+        self.fields['password'].widget = forms.PasswordInput(attrs={'class': 'form-control','placeholder':'Enter password'})

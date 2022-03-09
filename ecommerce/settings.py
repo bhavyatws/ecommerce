@@ -207,8 +207,23 @@ RAZOR_KEY_SECRET=os.getenv('RAZOR_KEY_SECRET')
 # ACCOUNT_DEFAULT_HTTP_PROTOCAL="https"
 # CSRF_TRUSTED_ORIGINS = ['https://front.bluemix.net',
 # ' https://986d-175-176-184-243.ngrok']
-ACCOUNT_AUTHENTICATION_METHOD='username_email'
+ACCOUNT_AUTHENTICATION_METHOD='username_email'#taking username or email in django allauth
+#Customing allauth login form
+#Syntax below
+# ACCOUNT_FORMS = {'login': 'yourapp.forms.YourLoginForm'}
+ACCOUNT_FORMS = {'login': 'front.forms.DjangoAllAuthLoginForm'}
+#########################
+# AllAuth Configuration #
+#########################
+'''ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_PASSWORD_MIN_LENGTH = 8'''
+#For Remember me in Djano Allauth
+ACCOUNT_SESSION_REMEMBER=None
 django_heroku.settings(locals())
-CSRF_TRUSTED_ORIGINS=['https://d765-175-176-184-243.ngrok.io']
+
 
 
