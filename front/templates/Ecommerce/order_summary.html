@@ -1,4 +1,5 @@
 {% extends 'Ecommerce/home-page.html' %}
+{% load static %}
 {% block title %}
     Summary
 {% endblock title %}
@@ -18,10 +19,10 @@
         {% endif %}
         <div class="table-responsive">
             <h3 class="mt-2">Order Summary</h3>
-            <table class="table  mt-4">
+            <table class="table  mt-4 text-center">
                 {% if not empty %}
                     <tr>
-                        <td>Cart is Empty</td>
+                        <td><img src="{% static 'empty_cart.png' %}"><br>Your cart is empty</td>
                         <a class="btn btn-dark float-right" href="/">Continue Shopping</a>
                     </tr>
                 {% else %}
