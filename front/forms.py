@@ -99,6 +99,7 @@ from allauth.account.forms import LoginForm
 class DjangoAllAuthLoginForm(LoginForm):
     def __init__(self, *args, **kwargs):
         super(DjangoAllAuthLoginForm, self).__init__(*args, **kwargs)
+        #type="email_text"=> allow to enter both and email and username
         self.fields['login'].widget = forms.TextInput(attrs={'type': 'email_text', 'class': 'form-control','placeholder':'Enter Email or Username'})
         self.fields["login"].label = "Username or Email"#changing login label to username or email in form
         self.fields['password'].widget = forms.PasswordInput(attrs={'class': 'form-control','placeholder':'Enter password'})
