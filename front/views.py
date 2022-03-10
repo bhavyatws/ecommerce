@@ -2,6 +2,7 @@
 
 
 from random import random
+import re
 
 from django.utils import timezone
 from django.http import HttpResponse
@@ -654,4 +655,7 @@ def track_order(request):
         print(order.items.all())
     context={'ordered_items':ordered_items}
     return render(request,'Ecommerce/track_order.html',context)
+
+def payment_testing(request):
+    return render(request,'Ecommerce/payment_success.html')
     

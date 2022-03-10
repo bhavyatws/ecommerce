@@ -1,6 +1,12 @@
-{% extends 'base.html' %}
+{% extends 'Ecommerce/home-page.html' %}
+{% load static %}
+{% block title %}
+Payment Fail{% endblock title %}
 {% block body %}
-<div class="container">
-    <h1>Fail</h1>
+<div class="container text-center" style="margin-top:51px;">
+    {% include 'Ecommerce/navbar.html' %}
+    <img src="{% static 'payment_success_img/payment_failed.png' %}" style="width:30%;"><br>
+    {% comment %} <a href="{% url 'home' %}" class="btn btn-success mt-1">Back to Home</a> {% endcomment %}
 </div>
+
 {% endblock body %}
