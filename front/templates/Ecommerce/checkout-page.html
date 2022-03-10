@@ -4,13 +4,19 @@
 {% load crispy_forms_tags %}
 {% block head %}
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script><script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
 
-    var hideable_shipping_form = $('.hideable_shipping_form');
+    {% comment %} var hideable_shipping_form = $('.hideable_shipping_form');
 var hideable_billing_form = $('.hideable_billing_form');
 var use_default_billing = document.querySelector("input[name='use_default_billing']");
-var use_default_shipping = document.querySelector('input[name="use_default_shipping"]');
-console.log(use_default_shipping)
+var use_default_shipping = document.querySelector('input[name="use_default_shipping"]'); {% endcomment %}
+$(document).ready(function(e) { 
+jQuery("#use_default_shipping").click(function(){
+    console.log("I am executed");
+    jQuery('.hideable_shipping_form').hide();
+  });
+}); 
+{% comment %} console.log(use_default_shipping)
 if (use_default_billing){
     use_default_billing.addEventListener('change', function() {
     if (this.checked) {
@@ -28,7 +34,7 @@ use_default_shipping.addEventListener('change', function() {
     hideable_shipping_form.show();
     }
     })
-}
+} {% endcomment %}
 
     </script>
     <meta charset="utf-8">
@@ -49,31 +55,7 @@ use_default_shipping.addEventListener('change', function() {
 {% endblock head %}
 {% block body %}
     <!-- Navbar -->
-    <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
-        <div class="container">
-            <!-- Brand -->
-            <!-- Links -->
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <!-- Left -->
-                <a class="navbar-brand waves-effect" href="/" >
-                    <strong class="blue-text">Ecommerce</strong>
-                  </a>
-                <ul class="navbar-nav mr-auto">
-                   
-                </ul>
-                <!-- Right -->
-                <ul class="navbar-nav nav-flex-icons">
-                    <li class="nav-item">
-                        <a class="nav-link waves-effect">
-                            <span class="badge red z-depth-1 mr-1">{{request.user|cart_item_count}}</span>
-                            <i class="fas fa-shopping-cart"></i>
-                            <span class="clearfix d-none d-sm-inline-block">Cart</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    {% include 'Ecommerce/navbar.html' %}
     <!-- Navbar -->
     <!--Main layout-->
     <!--Main layout-->
@@ -317,7 +299,7 @@ use_default_shipping.addEventListener('change', function() {
     <!-- Initializations -->
     <script type="text/javascript">
     // Animations initialization
-    new WOW().init();
-   
+    {% comment %} new WOW().init();
+    {% endcomment %}
     </script>
 {% endblock body %}

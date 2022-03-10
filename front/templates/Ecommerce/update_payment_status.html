@@ -1,7 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'Ecommerce/home-page.html' %}
+{% block title %}Order-Status-Update{% endblock title %}
 {% load crispy_forms_tags %}
 {% block body %}
-<div class="container mt-2">
+{% include 'Ecommerce/navbar.html' %}
+<div class="container " style="margin:100px;">
     <h3>Update Payment Status</h3>
     <form method="POST" action="{% url 'update-payment-status' instance.id %}" enctype="multipart/form-data">
     {% csrf_token %}
