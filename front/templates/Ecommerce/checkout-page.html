@@ -55,12 +55,11 @@ use_default_shipping.addEventListener('change', function() {
             <!-- Links -->
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <!-- Left -->
+                <a class="navbar-brand waves-effect" href="/" >
+                    <strong class="blue-text">Ecommerce</strong>
+                  </a>
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link waves-effect" href="/">Home
-                            <span class="sr-only">(current)</span>
-                        </a>
-                    </li>
+                   
                 </ul>
                 <!-- Right -->
                 <ul class="navbar-nav nav-flex-icons">
@@ -224,7 +223,7 @@ use_default_shipping.addEventListener('change', function() {
                                            class="custom-control-input"
                                            name="set_default_billing"
                                            id="set_default_billing">
-                                    <label class="custom-control-label" for="set_default-billing">Save as default Billing address</label>
+                                    <label class="custom-control-label" for="set_default_billing">Save as default Billing address</label>
                                 </div>
                             </div>
                             {% if default_billing_address %}

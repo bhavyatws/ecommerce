@@ -28,5 +28,6 @@ urlpatterns = [
     path('admin-add-item/',  views.admin_add_item, name='admin-add-item'),
     path('update-order-status/<str:pk>',  views.update_order_status, name='update-order-status'),
     path('update-payment-status/<str:pk>',  views.update_payment_status, name='update-payment-status'),
+    path('track-order/',  views.track_order, name='track-order'),
     
 ]

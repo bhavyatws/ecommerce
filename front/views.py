@@ -542,7 +542,7 @@ class RequestRefundView(LoginRequiredMixin,View):
             except ObjectDoesNotExist:
                 messages.info(self.request,"This order does not exist")
                 return redirect("request-refund")
-@login_required(login_url="login/")
+
 def filter_function(request,data=None):
    
    
@@ -645,4 +645,13 @@ def update_payment_status(request,pk):
     context={'form':form,'instance':instance}
     return render(request,'Ecommerce/update_payment_status.html',context=context)
 
+def track_order(request):
+    #prefetch_related is used as manytomany relation is used
+    ordered_items=Order.objects.prefetch_related('items').filter(user=request.user,ordered=True)
+    print(ordered_items)
+    # order_from_order=OrderItem.objects.prefetch_related('')
+    for order in ordered_items:
+        print(order.items.all())
+    context={'ordered_items':ordered_items}
+    return render(request,'Ecommerce/track_order.html',context)
     

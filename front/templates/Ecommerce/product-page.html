@@ -9,18 +9,16 @@
   <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
     <div class="container">
 
-      
+      <a class="navbar-brand waves-effect" href="/" >
+        <strong class="blue-text">Ecommerce</strong>
+      </a>
 
       <!-- Links -->
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
         <!-- Left -->
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link waves-effect" href="/">Home
-              <span class="sr-only">(current)</span>
-            </a>
-          </li>
+         
           
         </ul>
 
@@ -94,7 +92,7 @@
               {% comment %} <input type="number" value="1" aria-label="Search" class="form-control" style="width: 100px"> {% endcomment %}
               {% if user.is_authenticated %}
               <a href="{{object.get_add_to_cart}}" class="btn btn-primary btn-md my-0 p" type="submit">Add to cart</a>
-              <a href="{{object.get_remove_from_cart}}" class="btn btn-primary btn-md my-0 p" type="submit">Remove From Cart</a>
+              {% comment %} <a href="{{object.get_remove_from_cart}}" class="btn btn-primary btn-md my-0 p" type="submit">Remove From Cart</a> {% endcomment %}
               {% else %}
               <h5>Please login to buy</h5>
               {% endif %}
@@ -175,41 +173,7 @@
 
     <hr class="my-4">
 
-    <!-- Social icons -->
-    <div class="pb-4">
-      <a href="https://www.facebook.com/mdbootstrap" target="_blank">
-        <i class="fab fa-facebook-f mr-3"></i>
-      </a>
-
-      <a href="https://twitter.com/MDBootstrap" target="_blank">
-        <i class="fab fa-twitter mr-3"></i>
-      </a>
-
-      <a href="https://www.youtube.com/watch?v=7MUISDJ5ZZ4" target="_blank">
-        <i class="fab fa-youtube mr-3"></i>
-      </a>
-
-      <a href="https://plus.google.com/u/0/b/107863090883699620484" target="_blank">
-        <i class="fab fa-google-plus-g mr-3"></i>
-      </a>
-
-      <a href="https://dribbble.com/mdbootstrap" target="_blank">
-        <i class="fab fa-dribbble mr-3"></i>
-      </a>
-
-      <a href="https://pinterest.com/mdbootstrap" target="_blank">
-        <i class="fab fa-pinterest mr-3"></i>
-      </a>
-
-      <a href="https://github.com/mdbootstrap/bootstrap-material-design" target="_blank">
-        <i class="fab fa-github mr-3"></i>
-      </a>
-
-      <a href="http://codepen.io/mdbootstrap/" target="_blank">
-        <i class="fab fa-codepen mr-3"></i>
-      </a>
-    </div>
-    <!-- Social icons -->
+  
 
    
 

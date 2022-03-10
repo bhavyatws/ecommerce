@@ -54,6 +54,7 @@
 
 <body>
 {% block body %}
+
   <!-- Navbar -->
   <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
     <div class="container">
@@ -62,12 +63,24 @@
       <a class="navbar-brand waves-effect" href="/" >
         <strong class="blue-text">Ecommerce</strong>
       </a>
+      
       {% if user.is_authenticated and user.is_staff and user.is_superuser %}
       <a class="navbar-brand btn btn-warning " href="{% url 'admin_dashboard' %}" >
         <strong class="blue-text">Admin Dashboard</strong>
       </a>
   
       {% endif %}
+      {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissible mt-3 " role="alert">
+                    <span type="button"
+                          class="close"
+                          data-bs-dismiss="alert"
+                          aria-label="Close"><span aria-hidden="true">&times;</span></span>
+                    <strong>{{ message }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
 
       <!-- Collapse -->
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -97,28 +110,23 @@
               tutorials</a>
           </li> {% endcomment %}
         </ul>
-
+        
+      
         <!-- Right -->
         <ul class="navbar-nav nav-flex-icons">
          
           
           {% if request.user.is_authenticated %}
+          
           <li class="nav-item mx-1">
-            <a href="#" class="nav-link border border-light rounded waves-effect"
-              target="_blank">
+            <p class="nav-link waves-effect "
+            style="background-color:whitesmoke;"
+             >
               {{request.user.first_name}}
-            </a>
+          </p>
             <div class="container">
-              {% if messages %}
-              {% for message in messages %}
-              <div class="alert alert-success alert-dismissible mt-3 " role="alert">
-                <span type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></span>
-                <strong>{{message}}</strong> 
-              </div>
-              
-              {% endfor %}
-              
-              {% endif %}
+         
+             
           </li>
           <li class="nav-item mx-1">
             <a href="{% url 'account_logout' %}" class="nav-link border border-light rounded waves-effect"
@@ -131,6 +139,12 @@
             <a href="{% url 'request-refund' %}" class="nav-link border border-light rounded waves-effect"
               target="_blank">
               Refund
+            </a>
+          </li>
+          <li class="nav-item mx-1">
+            <a href="{% url 'track-order' %}" class="nav-link border border-light rounded waves-effect"
+              target="_blank">
+              Track Order
             </a>
           </li>
           {% else %}
@@ -170,7 +184,7 @@
 
   <!--Carousel Wrapper-->
   <div id="carousel-example-1z" class="carousel slide carousel-fade pt-4" data-ride="carousel">
-
+    
     <!--Indicators-->
     <ol class="carousel-indicators">
       <li data-target="#carousel-example-1z" data-slide-to="0" class="active"></li>
@@ -313,9 +327,11 @@
   <!--Main layout-->
   <main>
     <div class="container mt-5">
-
+      
+    
+ 
       <!--Navbar-->
-      <nav class="navbar navbar-expand-lg navbar-dark mdb-color lighten-3 mt-3 mb-5">
+      <nav class="navbar navbar-expand-lg navbar-dark mdb-color lighten-3 mt-5 mb-5">
 
         <!-- Navbar brand -->
         <span class="navbar-brand">Categories:</span>
@@ -360,10 +376,11 @@
 
       </nav>
       <!--/.Navbar-->
-
+      
       <!--Section: Products v.3-->
+      
       <section class="text-center mb-4">
-
+        {% if object_list %}
         <!--Grid row-->
         <div class="row wow fadeIn">
 
@@ -420,7 +437,7 @@
 
         </div>
         <!--Grid row-->
-
+{% else %}<h5>No Result Found</h5>{% endif %}
         
 
       </section>
@@ -484,41 +501,7 @@
 
     <hr class="my-4">
 
-    <!-- Social icons -->
-    <div class="pb-4">
-      <a href="https://www.facebook.com/mdbootstrap" target="_blank">
-        <i class="fab fa-facebook-f mr-3"></i>
-      </a>
-
-      <a href="https://twitter.com/MDBootstrap" target="_blank">
-        <i class="fab fa-twitter mr-3"></i>
-      </a>
-
-      <a href="https://www.youtube.com/watch?v=7MUISDJ5ZZ4" target="_blank">
-        <i class="fab fa-youtube mr-3"></i>
-      </a>
-
-      <a href="https://plus.google.com/u/0/b/107863090883699620484" target="_blank">
-        <i class="fab fa-google-plus-g mr-3"></i>
-      </a>
-
-      <a href="https://dribbble.com/mdbootstrap" target="_blank">
-        <i class="fab fa-dribbble mr-3"></i>
-      </a>
-
-      <a href="https://pinterest.com/mdbootstrap" target="_blank">
-        <i class="fab fa-pinterest mr-3"></i>
-      </a>
-
-      <a href="https://github.com/mdbootstrap/bootstrap-material-design" target="_blank">
-        <i class="fab fa-github mr-3"></i>
-      </a>
-
-      <a href="http://codepen.io/mdbootstrap/" target="_blank">
-        <i class="fab fa-codepen mr-3"></i>
-      </a>
-    </div>
-    <!-- Social icons -->
+  
 
  
 
@@ -538,7 +521,9 @@
   <script type="text/javascript">
     // Animations initialization
     new WOW().init();
-    $(".alert").alert('close')
+    {% comment %} $(".alert").alert('close') =>This causing to alert button automatically
+    close
+    {% endcomment %}
 
   </script>
   {% endblock script %}
