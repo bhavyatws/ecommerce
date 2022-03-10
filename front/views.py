@@ -655,7 +655,7 @@ def track_order(request):
         print(order.items.all())
     context={'ordered_items':ordered_items}
     return render(request,'Ecommerce/track_order.html',context)
-
-def payment_testing(request):
-    return render(request,'Ecommerce/payment_success.html')
+#Debug payment page
+# def payment_testing(request):
+#     return render(request,'Ecommerce/payment_success.html')
     

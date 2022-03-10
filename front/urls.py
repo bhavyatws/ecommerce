@@ -29,6 +29,7 @@ urlpatterns = [
     path('update-order-status/<str:pk>',  views.update_order_status, name='update-order-status'),
     path('update-payment-status/<str:pk>',  views.update_payment_status, name='update-payment-status'),
     path('track-order/',  views.track_order, name='track-order'),
-    path('pay/',  views.payment_testing, name='pay'),
+    #Debugging payment page
+    # path('pay/',  views.payment_testing, name='pay'),
     
 ]
