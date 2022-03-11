@@ -2,7 +2,6 @@
 
 
 from random import random
-import re
 
 from django.utils import timezone
 from django.http import HttpResponse
@@ -218,6 +217,7 @@ class CheckOutView(LoginRequiredMixin,View):
                 address_type='S',
                 default=True
             )
+            print("Shipping Address",shipping_address_qs[0])
             if shipping_address_qs.exists():
                 context.update({'default_shipping_address':shipping_address_qs[0]})
             billing_address_qs=Address.objects.filter(
@@ -225,8 +225,9 @@ class CheckOutView(LoginRequiredMixin,View):
                 address_type='B',
                 default=True
             )
+    
             if billing_address_qs.exists():
-                context.update({'default_shipping_address':billing_address_qs[0]})
+                context.update({'default_billing_address':billing_address_qs[0]})
             return render(self.request,'Ecommerce/checkout-page.html',context)
 
         except ObjectDoesNotExist:
@@ -237,7 +238,8 @@ class CheckOutView(LoginRequiredMixin,View):
         order=Order.objects.get(user=self.request.user,ordered=False)
         try:
             if form.is_valid():
-                use_default_shipping=self.request.POST.get('use_default_shipping')
+                use_default_shipping=self.request.POST.get('use_default_shipping_address')
+                print("Inside Shipping POST",use_default_shipping)
                 if use_default_shipping:
                     print("using default shipping")
                     address_qs=Address.objects.filter(
@@ -283,6 +285,7 @@ class CheckOutView(LoginRequiredMixin,View):
                         messages.info(self.request,'Please fill required fields of form')
                 
                     use_default_billing=self.request.POST.get('use_default_billing')
+                    print("Default Billing Inside Post",use_default_billing)
                     same_billing_address=self.request.POST.get('same_billing_address')
                     if same_billing_address:
                         billing_address=shipping_address
@@ -328,6 +331,7 @@ class CheckOutView(LoginRequiredMixin,View):
                             order.address=billing_address
                             order.save()
                             set_default_billing=self.request.POST.get("set_default_billing")
+                            print("Set Default Billing",set_default_billing)
                             if set_default_billing:
                                 billing_address.default=True
                                 billing_address.save()
@@ -394,8 +398,8 @@ def payment(request):
     # order id of newly created order.
     razorpay_order_id = razorpay_order['id']
     from django.contrib.sites.shortcuts import get_current_site
-    callback_url ='https://'+ str(get_current_site(request))+"/paymenthandler/"
-    '''callback_url ='http://'+ str(get_current_site(request))+"/paymenthandler/"#for local'''
+    # callback_url ='https://'+ str(get_current_site(request))+"/paymenthandler/"
+    callback_url ='http://'+ str(get_current_site(request))+"/paymenthandler/"#for local
     print(callback_url)
     # callback_url='paymenthandler/'
     # we need to pass these details to frontend.
@@ -417,7 +421,7 @@ def payment(request):
     order.payment_detail = payment
     order.save()
     
-    messages.success(request,"Your order was successful")
+    # messages.success(request,"Your order was successful")
     
     return render(request, 'Ecommerce/payment.html', context=context)
 
@@ -480,7 +484,7 @@ def paymenthandler(request):
                     order.ref_code=create_ref_code()
                     order.ordered = True
                     order.save()
-                    messages.success(request,"Your order was successful")
+                    messages.success(request,"Your order is successful")
                 else: 
                     return redirect('payment')
                 

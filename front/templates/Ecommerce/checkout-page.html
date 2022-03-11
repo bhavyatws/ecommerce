@@ -9,7 +9,7 @@
 var hideable_shipping_form = $('.hideable_shipping_form');
 var hideable_billing_form = $('.hideable_billing_form');
 var use_default_billing = document.querySelector("input[name='use_default_billing']");
-var use_default_shipping = document.querySelector('input[name="use_default_shipping"]');
+var use_default_shipping = document.querySelector('input[name="use_default_shipping_address"]');
 
 console.log(use_default_shipping)
 if (use_default_billing){
@@ -133,9 +133,9 @@ use_default_shipping.addEventListener('change', function() {
                                 <div class="custom-control custom-checkbox">
                                     <input type="checkbox"
                                            class="custom-control-input"
-                                           name="use_default_shipping"
-                                           id="use_default_shipping">
-                                    <label class="custom-control-label" for="use_default_shipping">
+                                           name="use_default_shipping_address"
+                                           id="use_default_shipping_address">
+                                    <label class="custom-control-label" for="use_default_shipping_address">
                                         {{ default_shipping_address.street_address|truncatechars:10 }}
                                     </label>
                                 </div>

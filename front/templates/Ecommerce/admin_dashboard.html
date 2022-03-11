@@ -367,7 +367,7 @@ const myChart = new Chart(ctx, {
     const data = {
       labels: labels,
       datasets: [{
-        label: 'Last Week Earning in Rs.',
+        label: 'Total Earning in Rs.',
         backgroundColor: 'rgb(255, 99, 132)',
         borderColor: 'rgb(255, 99, 132)',
         data: [{% for payments in seven_days_earning %}{{payments}},{% endfor %}],
