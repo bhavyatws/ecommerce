@@ -1,10 +1,113 @@
 {% extends 'Ecommerce/home-page.html' %}
+{% load cart_template_tags %}
 {% load static %}
 {% block title %}
 Payment Success{% endblock title %}
 {% block body %}
 <div class="container text-center" style="margin-top:51px;">
-    {% include 'Ecommerce/navbar.html' %}
+
+<!-- Navbar -->
+ <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
+    <div class="container">
+
+      <!-- Brand -->
+      <a class="navbar-brand waves-effect" href="/" >
+        <strong class="blue-text">Ecommerce</strong>
+      </a>
+      
+      {% if user.is_authenticated and user.is_staff and user.is_superuser %}
+      <a class="navbar-brand btn btn-warning " href="{% url 'admin_dashboard' %}" >
+        <strong class="blue-text">Admin Dashboard</strong>
+      </a>
+  
+      {% endif %}
+      
+
+      <!-- Collapse -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Links -->
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        <!-- Left -->
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+           
+        </ul>
+        
+      
+        <!-- Right -->
+        <ul class="navbar-nav nav-flex-icons">
+         
+          
+          {% if request.user.is_authenticated %}
+          
+          <li class="nav-item mx-1">
+            <p class="nav-link  "
+            style="background-color:whitesmoke;"
+             >
+              {{request.user.first_name}}
+          </p>
+            <div class="container">
+         
+             
+          </li>
+          <li class="nav-item mx-1">
+            <a href="{% url 'account_logout' %}" class="nav-link border border-light rounded waves-effect"
+             >
+              Logout
+            </a>
+            
+          </li>
+          <li class="nav-item mx-1">
+            <a href="{% url 'request-refund' %}" class="nav-link border border-light rounded waves-effect"
+             >
+              Refund
+            </a>
+          </li>
+          <li class="nav-item mx-1">
+            <a href="{% url 'track-order' %}" class="nav-link border border-light rounded waves-effect"
+            >
+              Track Order
+            </a>
+          </li>
+          {% else %}
+          <li class="nav-item mx-1">
+            <a href="{% url 'account_login' %}" class="nav-link border border-light rounded waves-effect"
+              >
+           Login
+            </a>
+          </li>
+          
+          <li class="nav-item mx-1">
+            <a href="{% url 'signup' %}" class="nav-link border border-light rounded waves-effect"
+             >
+              Register
+            </a>
+          </li>
+         
+          {% endif %}
+          {% if user.is_authenticated %}
+ 
+         
+          <li class="nav-item">
+            <a href="{% url 'order-summary' %}" class="nav-link waves-effect">
+              <span class="badge red z-depth-1 mr-1"> {{request.user|cart_item_count}} </span>
+              <i class="fas fa-shopping-cart"></i>
+              <span class="clearfix d-none d-sm-inline-block"> Cart </span>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  <!-- Navbar -->
     <img src="{% static 'payment_success_img/payment.png' %}" style="width:30%;"><br>
     <h4>Congratulations!! Payment Done</h4>
     {% comment %} <a href="{% url 'home' %}" class="btn btn-success mt-1">Back to Home</a> {% endcomment %}

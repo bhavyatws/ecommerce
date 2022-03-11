@@ -69,7 +69,11 @@ class RefundForm(forms.Form):
 class AddItem(ModelForm):
    class Meta:
         model=Item
-        fields = '__all__'
+        exclude=['slug']
+        widgets={
+            'description':forms.Textarea(attrs={'cols':'42','rows':'5'})
+        }
+          
 class OrderStatusUpdate(ModelForm):
 
     class Meta:

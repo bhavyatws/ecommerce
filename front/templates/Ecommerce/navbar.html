@@ -14,6 +14,7 @@
       </a>
   
       {% endif %}
+      {% block messages %}
       {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-success alert-dismissible mt-0 " role="alert" style="margin:-3px;">
@@ -25,7 +26,7 @@
                 </div>
             {% endfor %}
         {% endif %}
-
+        {% endblock messages %}
       <!-- Collapse -->
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

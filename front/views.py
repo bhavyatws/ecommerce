@@ -327,8 +327,8 @@ class CheckOutView(LoginRequiredMixin,View):
                             billing_address.save()
                             order.address=billing_address
                             order.save()
-                            set_default_shipping=self.request.POST.get("set_default_shipping")
-                            if set_default_shipping:
+                            set_default_billing=self.request.POST.get("set_default_billing")
+                            if set_default_billing:
                                 billing_address.default=True
                                 billing_address.save()
                         else: 
@@ -352,7 +352,8 @@ class CheckOutView(LoginRequiredMixin,View):
                 # billing_address.save()
                 # order.address=billing_address
                 # order.save()
-                
+                payment_option=self.request.POST.get('payment_option')
+                print(payment_option)
                 # Checking which payment method has been used and redirecting to that page
                 if payment_option=="R":
                     return redirect("payment")
@@ -393,7 +394,8 @@ def payment(request):
     # order id of newly created order.
     razorpay_order_id = razorpay_order['id']
     from django.contrib.sites.shortcuts import get_current_site
-    callback_url ='http://'+ str(get_current_site(request))+"/paymenthandler/"
+    # callback_url ='https://'+ str(get_current_site(request))+"/paymenthandler/"
+    callback_url ='http://'+ str(get_current_site(request))+"/paymenthandler/"#for local
     print(callback_url)
     # callback_url='paymenthandler/'
     # we need to pass these details to frontend.
@@ -454,7 +456,7 @@ def paymenthandler(request):
 
                 
                 order=Order.objects.get(payment_detail__razorpay_id=razorpay_order_id,ordered=False)
-                # print("payment Handler:",order)
+                print("Query Running payment Handler:",order)
                 print(order.payment_detail.paid)
                 # print(request.user)
                 # payment=Payments(
@@ -574,6 +576,11 @@ def admin_dashboard(request):
     order_delivered=Order.objects.filter(order_status="D").count()
     order_payment_done=Order.objects.filter(payment_detail__paid=True).count()
     orders=Order.objects.all()
+    payment_ids=Payments.objects.all()
+
+    for order in orders:
+        print("Payment Detail",order.payment_detail.id)
+    
     total_items=Item.objects.all().count()
     #Custom logic for fetching first_week graph total order summary
     today=datetime.datetime.now()
@@ -616,9 +623,15 @@ def admin_dashboard(request):
     return render(request,'Ecommerce/admin_dashboard.html',context=context)
 @login_required(login_url="login/")
 def admin_add_item(request):
+    latest_item_id=(Item.objects.last()).id#fetching last inserted item id
+    next_item_id=latest_item_id + 1
+    print("Latest Id",next_item_id)
     form=AddItem()
     form=AddItem(request.POST or None,request.FILES)
     if form.is_valid():
+        form=form.save(commit=False)
+        form.slug=form.title + '-' + str(next_item_id)
+        print(form.slug)
         form.save()
         return redirect('admin_dashboard')
     context={'form':form}
@@ -642,6 +655,7 @@ def update_payment_status(request,pk):
     # if request.method=="POST":
     if form.is_valid():
         form.save()
+        print("Succesfully Updated")
         return redirect('admin_dashboard')
     context={'form':form,'instance':instance}
     return render(request,'Ecommerce/update_payment_status.html',context=context)
