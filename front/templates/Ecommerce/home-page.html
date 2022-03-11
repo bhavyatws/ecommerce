@@ -270,9 +270,9 @@
 
               <!--Card image-->
               <div class="view overlay">
-                <a href="{{item.get_absolute_url}}"><img src="{{item.image.url}}" class="card-img-top"
-                  alt=""></a>
-                <a>
+                <img src="{{item.image.url}}" class="card-img-top"
+                  alt="">
+                <a href="{{item.get_absolute_url}}">
                   <div class="mask rgba-white-slight"></div>
                 </a>
               </div>
@@ -281,7 +281,7 @@
               <!--Card content-->
               <div class="card-body text-center">
                 <!--Category & Title-->
-                <a href="" class="grey-text">
+                <a href="{{item.get_absolute_url}}" class="grey-text">
                   <h5>{{item.get_category_display}}</h5>
                 </a>
                 <h5>
