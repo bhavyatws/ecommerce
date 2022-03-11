@@ -1,6 +1,7 @@
-{% extends 'base.html' %} {% block titile %}Login{% endblock titile %} {% block body %}
+{% extends 'Ecommerce/home-page.html' %} {% block titile %}Login{% endblock titile %} {% block body %}
 
 <div class="container">
+    {% include 'Ecommerce/navbar.html' %}
     <h4 class="mx-10">Login</h4>
     <form method="POST" action="{% url 'login' %}">
        {% csrf_token %}

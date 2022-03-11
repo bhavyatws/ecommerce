@@ -1,15 +1,14 @@
-{% extends 'base.html' %}
-{% block titile %}
+{% extends 'Ecommerce/home-page.html' %}
+{% block title %}
     Login
-{% endblock titile %}
-
+{% endblock title %}
 {% block body %}
     {% load socialaccount %}
     {% load static %}
     <body onload="document.forms['google_login'].submit()">
-        <div class="container w-50">
+        <div class="container w-50" style=" margin-top: 73px; ">
+            {% include 'Ecommerce/navbar.html' %}
             <h4 class="mx-10 mt-2" style="text-align: center;">Login</h4>
-            
             <div class="container">
                 <form class="login " method="POST" action="{% url 'account_login' %}">
                     {% csrf_token %}
@@ -23,42 +22,45 @@
                     <a class="btn btn-primary" href="{% url 'signup' %}">Register</a>
                 </form>
             </div>
-            <div class="row">
-                <div style="width: 150%;" scope=" col">
+            <div class="row " >
+                <div style="width: 60%;" scope=" col">
                     <form method="post" action="{% provider_login_url 'google'   %}">
                         {% csrf_token %}
-                        <button type="submit" style="color: #545454; 
-                    
-                        background-color: #ffffff;
-                        box-shadow: 0 1px 2px 1px #ddd;" class="btn btn-lg  btn-block  btn-outline mt-2" >
-                            <img src="https://img.icons8.com/color/35/000000/google-logo.png"> Sign in with Google
-                          </button>
-                      
-                    </form>
-                
-                <div style="width: 150%;" scope="col">
-                    <form method="post" action="{% provider_login_url 'facebook'  %}">
-                        {% csrf_token %}
-                    
-                        <button type="submit" style="color: #545454; 
-                    
-                        background-color: #ffffff;
-                        box-shadow: 0 1px 2px 1px #ddd;" class="btn btn-lg  btn-block  btn-outline mt-2" >
-                        <img src="https://img.icons8.com/color/40/000000/facebook-new.png"/> Sign in with Facebook
-                          </button>
-                      
+                        <button type="submit"
+                                style="color: #545454;
+                                       background-color: #ffffff;
+                                       box-shadow: 0 1px 2px 1px #ddd;"
+                                class="btn btn-lg  btn-block  btn-outline mt-2">
+                            <img src="https://img.icons8.com/color/35/000000/google-logo.png">
+                            Sign in with Google
+                        </button>
                     </form>
                 </div>
-                <div style="width: 150%;" class="col">
+               
+                <div style="width: 60%;" scope="col">
+                    <form method="post" action="{% provider_login_url 'facebook'  %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                                style="color: #545454;
+                                       background-color: #ffffff;
+                                       box-shadow: 0 1px 2px 1px #ddd;"
+                                class="btn btn-lg  btn-block  btn-outline mt-2">
+                            <img src="https://img.icons8.com/color/40/000000/facebook-new.png"/>
+                            Sign in with Facebook
+                        </button>
+                    </form>
+                </div>
+                <div style="width: 60%;"  scope="col">
                     <form method="post" action="{% provider_login_url 'github'  %}">
                         {% csrf_token %}
-                      
-                        <button type="submit" style="color: #545454; 
-                    
-                        background-color: #ffffff;
-                        box-shadow: 0 1px 2px 1px #ddd;" class="btn btn-lg  btn-block  btn-outline mt-2" >
-                        <img src="https://img.icons8.com/glyph-neue/40/000000/github.png"/> Sign in with Github
-                          </button>
+                        <button type="submit"
+                                style="color: #545454;
+                                       background-color: #ffffff;
+                                       box-shadow: 0 1px 2px 1px #ddd;"
+                                class="btn btn-lg  btn-block  btn-outline mt-2">
+                            <img src="https://img.icons8.com/glyph-neue/40/000000/github.png"/>
+                            Sign in with Github
+                        </button>
                     </form>
                 </div>
             </div>
