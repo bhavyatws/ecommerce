@@ -106,12 +106,13 @@ class Item(models.Model):
     def get_remove_from_cart(self):
         return reverse("remove-from-cart", kwargs={"slug": self.slug})
     #This method save slug after item has been addedz
-    def save(self, *args, **kwargs):
-        #super method call above class 
-        super().save(*args, **kwargs)#It save item at fist
-        if not self.slug:
-            self.slug = self.title + '-' +str(self.id)#then inserting slug
-            self.save()
+    # def save(self, *args, **kwargs):
+    #     #super method call above class 
+    #     super().save(*args, **kwargs)#It save item at fist
+    #     if not self.slug:
+    #         self.slug = self.title + '-' +str(self.id)#then inserting slug
+    #         self.save()
+        
    
     def __str__(self):
         return self.title
