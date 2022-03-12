@@ -2,8 +2,6 @@
 
 from email.policy import default
 from lib2to3.refactor import MultiprocessingUnsupported
-from statistics import mode
-from tabnanny import verbose
 from xml.dom.pulldom import default_bufsize
 from MySQLdb import Timestamp
 from django.db import models
@@ -11,6 +9,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.timezone import now
 from django.shortcuts import reverse
 from django_countries.fields import CountryField
+
 category = (
     ("Electronics", "Electronics"),
     ("Sports", "Sports"),
@@ -97,7 +96,7 @@ class Item(models.Model):
     discount_price=models.FloatField(blank=True,null=True)
     category=models.CharField(choices=CATEGORY_CHOICES,max_length=2)
     label=models.CharField(choices=LABEL_CHOICES,max_length=1)
-    slug=models.SlugField()
+    slug=models.SlugField(blank=True)
     description=models.TextField()
     image=models.ImageField(upload_to='Images',null=True,blank=True)
     def get_absolute_url(self):
@@ -106,6 +105,14 @@ class Item(models.Model):
         return reverse("add-to-cart", kwargs={"slug": self.slug})
     def get_remove_from_cart(self):
         return reverse("remove-from-cart", kwargs={"slug": self.slug})
+    #This method save slug after item has been addedz
+    def save(self, *args, **kwargs):
+        #super method call above class 
+        super().save(*args, **kwargs)#It save item at fist
+        if not self.slug:
+            self.slug = self.title + '-' +str(self.id)#then inserting slug
+            self.save()
+   
     def __str__(self):
         return self.title
 class OrderItem(models.Model):

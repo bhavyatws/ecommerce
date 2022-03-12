@@ -249,7 +249,10 @@
                         Total   Earning
                     </h5>
                     <p class="card-text mx-5">
-                        <h3>Rs.{{total_earnings}}</h3>
+                        <h3>{% if total_earnings  %}Rs.{{total_earnings}}</h3>{% else %}
+                        Rs.0
+                        {% endif %}
+                          
                     </p>
                     
                 </div>

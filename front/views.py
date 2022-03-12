@@ -642,10 +642,13 @@ def admin_add_item(request):
     form=AddItem()
     form=AddItem(request.POST or None,request.FILES)
     if form.is_valid():
-        form=form.save(commit=False)
-        form.slug=form.title + '-' + str(id)
-        print(form.slug)
+        # form=form.save(commit=False)
         form.save()
+        # item=Item.objects.filter(tit)
+        # item.save()
+        # form.slug=form.title + '-' + str(id)
+        # print(form.slug)
+        # form.save()
         return redirect('admin_dashboard')
     context={'form':form}
     return render(request,'Ecommerce/add_admin_item.html',context=context)
