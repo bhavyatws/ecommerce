@@ -219,6 +219,8 @@ class CheckOutView(LoginRequiredMixin,View):
             )
             print("Shipping Address",shipping_address_qs[0])
             if shipping_address_qs.exists():
+                print("dsfdsd")
+                print(f'shipping_address_qs={shipping_address_qs[0]}')
                 context.update({'default_shipping_address':shipping_address_qs[0]})
             billing_address_qs=Address.objects.filter(
                 user=self.request.user,
@@ -227,6 +229,8 @@ class CheckOutView(LoginRequiredMixin,View):
             )
     
             if billing_address_qs.exists():
+                print('test')
+                print(f'billing_address_qs={billing_address_qs[0]}')
                 context.update({'default_billing_address':billing_address_qs[0]})
             return render(self.request,'Ecommerce/checkout-page.html',context)
 
@@ -236,144 +240,146 @@ class CheckOutView(LoginRequiredMixin,View):
     def post(self,*args,**kwargs):
         form=CheckoutForm(self.request.POST or None)
         order=Order.objects.get(user=self.request.user,ordered=False)
-        try:
-            if form.is_valid():
-                use_default_shipping=self.request.POST.get('use_default_shipping_address')
-                print("Inside Shipping POST",use_default_shipping)
-                if use_default_shipping:
-                    print("using default shipping")
+        
+        if form.is_valid():
+            print(self.request.POST)
+            # print(f'use_default_shipping_address={use_default_shipping_address}')
+            use_default_shipping=self.request.POST.get('use_default_shipping_address')
+            print("Inside Shipping POST",use_default_shipping)
+            if use_default_shipping:
+                print("using default shipping")
+                address_qs=Address.objects.filter(
+                    user=self.request.user,
+                    address_type='S',
+                    default=True
+                    )
+                if address_qs.exists():
+                    shipping_address=address_qs[0]
+                    order.shipping_address=shipping_address
+                    order.save()
+                else:
+                    messages.info(self.request,"No default shipping address availabel")
+                    return redirect("check_out")
+            else:
+                print("User is entering new shipping address")
+
+                    
+                shipping_address1=self.request.POST.get('shipping_address1')
+                print(shipping_address1)
+                shipping_address2=self.request.POST.get('shipping_address2')
+                print(shipping_address2)
+                shipping_country=form.cleaned_data.get('shipping_country')
+                shipping_zip=self.request.POST.get('shipping_zip')
+                if is_valid_form([shipping_address1,shipping_address2,shipping_country,shipping_zip]):
+                    shipping_address=Address(
+                    user=self.request.user,
+                    street_address=shipping_address1,
+                    appartment_address=shipping_address2,
+                    country=shipping_country,
+                    zip= shipping_zip,
+                    address_type='S'
+                    )
+                    
+                    shipping_address.save()
+                    order.shipping_address=shipping_address
+                    order.save()
+                    set_default_shipping=self.request.POST.get("set_default_shipping")
+                    if set_default_shipping:
+                        shipping_address.default=True
+                        shipping_address.save()
+                else: 
+                    messages.info(self.request,'Please fill required fields of form')
+            
+                use_default_billing=self.request.POST.get('use_default_billing')
+                print("Default Billing Inside Post",use_default_billing)
+                same_billing_address=self.request.POST.get('same_billing_address')
+                if same_billing_address:
+                    billing_address=shipping_address
+                    billing_address.pk=None
+                    billing_address.save()
+                    billing_address.address_type='B'
+                    billing_address.save()
+                    order.billing_address=billing_address
+                    order.save()
+                    
+                elif use_default_billing:
+                    print("using default billing")
                     address_qs=Address.objects.filter(
                         user=self.request.user,
-                        address_type='S',
+                        address_type='B',
                         default=True
-                        )
+                    )
                     if address_qs.exists():
-                        shipping_address=address_qs[0]
-                        order.shipping_address=shipping_address
+                        billing_address=address_qs[0]
+                        order.billing_address=billing_address
                         order.save()
                     else:
-                        messages.info(self.request,"No default shipping address availabel")
+                        messages.info(self.request,"No default billing address availabel")
                         return redirect("check_out")
                 else:
-                    print("User is entering new shipping address")
+                    print("User is entering new billing address")
 
-                        
-                    shipping_address1=self.request.POST.get('shipping_address1')
-                    print(shipping_address1)
-                    shipping_address2=self.request.POST.get('shipping_address2')
-                    print(shipping_address2)
-                    shipping_country=form.cleaned_data.get('shipping_country')
-                    shipping_zip=self.request.POST.get('shipping_zip')
-                    if is_valid_form([shipping_address1,shipping_address2,shipping_country,shipping_zip]):
-                        shipping_address=Address(
+                    
+                    billing_address1=self.request.POST.get('billing_address1')
+                    billing_address2=self.request.POST.get('billing_address2')
+                    billing_country=self.request.POST.get('billing_country')
+                    billing_zip=self.request.POST.get('billing_zip')
+                    if is_valid_form([billing_address1,billing_address2,billing_country,billing_zip]):
+                        billing_address=Address(
                         user=self.request.user,
-                        street_address=shipping_address1,
-                        appartment_address=shipping_address2,
-                        country=shipping_country,
-                        zip= shipping_zip,
-                        address_type='S'
+                        street_address=billing_address1,
+                        appartment_address=billing_address2,
+                        country=billing_country,
+                        zip= billing_zip,
+                        address_type='B'
                         )
-                        
-                        shipping_address.save()
-                        order.shipping_address=shipping_address
+                        billing_address.save()
+                        order.address=billing_address
                         order.save()
-                        set_default_shipping=self.request.POST.get("set_default_shipping")
-                        if set_default_shipping:
-                            shipping_address.default=True
-                            shipping_address.save()
+                        set_default_billing=self.request.POST.get("set_default_billing")
+                        print("Set Default Billing",set_default_billing)
+                        if set_default_billing:
+                            billing_address.default=True
+                            billing_address.save()
                     else: 
                         messages.info(self.request,'Please fill required fields of form')
                 
-                    use_default_billing=self.request.POST.get('use_default_billing')
-                    print("Default Billing Inside Post",use_default_billing)
-                    same_billing_address=self.request.POST.get('same_billing_address')
-                    if same_billing_address:
-                        billing_address=shipping_address
-                        billing_address.pk=None
-                        billing_address.save()
-                        billing_address.address_type='B'
-                        billing_address.save()
-                        order.billing_address=billing_address
-                        order.save()
-                        
-                    elif use_default_billing:
-                        print("using default billing")
-                        address_qs=Address.objects.filter(
-                            user=self.request.user,
-                            address_type='B',
-                            default=True
-                        )
-                        if address_qs.exists():
-                            billing_address=address_qs[0]
-                            order.billing_address=billing_address
-                            order.save()
-                        else:
-                            messages.info(self.request,"No default billing address availabel")
-                            return redirect("check_out")
-                    else:
-                        print("User is entering new billing address")
-
-                        
-                        billing_address1=self.request.POST.get('billing_address1')
-                        billing_address2=self.request.POST.get('billing_address2')
-                        billing_country=self.request.POST.get('billing_country')
-                        billing_zip=self.request.POST.get('billing_zip')
-                        if is_valid_form([billing_address1,billing_address2,billing_country,billing_zip]):
-                            billing_address=Address(
-                            user=self.request.user,
-                            street_address=billing_address1,
-                            appartment_address=billing_address2,
-                            country=billing_country,
-                            zip= billing_zip,
-                            address_type='B'
-                            )
-                            billing_address.save()
-                            order.address=billing_address
-                            order.save()
-                            set_default_billing=self.request.POST.get("set_default_billing")
-                            print("Set Default Billing",set_default_billing)
-                            if set_default_billing:
-                                billing_address.default=True
-                                billing_address.save()
-                        else: 
-                            messages.info(self.request,'Please fill required fields of form')
-                    
-                    payment_option=self.request.POST.get('payment_option')
-            
-                    #TODO:Add Function Functionality
-                    # saving_info=form.cleaned_data.get('saving_info')
-                    # same_shipping_address=form.cleaned_data.get('saving_shipping_address')
-                    payment_info=self.request.POST.get('payment_info')
-                #     print(street_address,appartment_address,country,zip,payment_option)
-                #     billing_address=Address(
-                #     user=self.request.user,
-                #     street_address=street_address,
-                #     appartment_address=appartment_address,
-                #     country=country,
-                #     zip= zip,
-                #     address_type='B'
-                #     )
-                # billing_address.save()
-                # order.address=billing_address
-                # order.save()
                 payment_option=self.request.POST.get('payment_option')
-                print(payment_option)
-                # Checking which payment method has been used and redirecting to that page
-                if payment_option=="R":
-                    return redirect("payment")
-                elif payment_option=="P":
-                    return redirect("check_out")
-                else:
-                    return redirect("order-summary")
-                # #TODO Redirecting to selected Payment
-                # return redirect("payment")
-            messages.warning(self.request,"Failed Checkout")
-            return redirect("check_out")
-        except ObjectDoesNotExist:
-            messages.success(self.request,"You donot have active order")
-            return redirect("order-summary")
         
-       
+                #TODO:Add Function Functionality
+                # saving_info=form.cleaned_data.get('saving_info')
+                # same_shipping_address=form.cleaned_data.get('saving_shipping_address')
+                payment_info=self.request.POST.get('payment_info')
+            #     print(street_address,appartment_address,country,zip,payment_option)
+            #     billing_address=Address(
+            #     user=self.request.user,
+            #     street_address=street_address,
+            #     appartment_address=appartment_address,
+            #     country=country,
+            #     zip= zip,
+            #     address_type='B'
+            #     )
+            # billing_address.save()
+            # order.address=billing_address
+            # order.save()
+            payment_option=self.request.POST.get('payment_option')
+            print(payment_option)
+            # Checking which payment method has been used and redirecting to that page
+            if payment_option=="R":
+                return redirect("payment")
+            elif payment_option=="P":
+                return redirect("check_out")
+            else:
+                return redirect("order-summary")
+            # #TODO Redirecting to selected Payment
+            # return redirect("payment")
+        messages.warning(self.request,"Failed Checkout")
+        return redirect("check_out")
+    # except ObjectDoesNotExist:
+    #     messages.success(self.request,"You donot have active order")
+    #     return redirect("order-summary")
+    
+    
 
 
 
