@@ -217,7 +217,7 @@ class CheckOutView(LoginRequiredMixin,View):
                 address_type='S',
                 default=True
             )
-            print("Shipping Address",shipping_address_qs[0])
+
             if shipping_address_qs.exists():
                 print("dsfdsd")
                 print(f'shipping_address_qs={shipping_address_qs[0]}')
@@ -245,7 +245,6 @@ class CheckOutView(LoginRequiredMixin,View):
             print(self.request.POST)
             # print(f'use_default_shipping_address={use_default_shipping_address}')
             use_default_shipping=self.request.POST.get('use_default_shipping_address')
-            print("Inside Shipping POST",use_default_shipping)
             if use_default_shipping:
                 print("using default shipping")
                 address_qs=Address.objects.filter(
