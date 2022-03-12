@@ -403,8 +403,8 @@ def payment(request):
     # order id of newly created order.
     razorpay_order_id = razorpay_order['id']
     from django.contrib.sites.shortcuts import get_current_site
-    # callback_url ='https://'+ str(get_current_site(request))+"/paymenthandler/"
-    callback_url ='http://'+ str(get_current_site(request))+"/paymenthandler/"#for local
+    callback_url ='https://'+ str(get_current_site(request))+"/paymenthandler/"
+    # callback_url ='http://'+ str(get_current_site(request))+"/paymenthandler/"#for local
     print(callback_url)
     # callback_url='paymenthandler/'
     # we need to pass these details to frontend.
