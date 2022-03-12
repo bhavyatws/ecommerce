@@ -635,15 +635,15 @@ def admin_dashboard(request):
     return render(request,'Ecommerce/admin_dashboard.html',context=context)
 @login_required(login_url="login/")
 def admin_add_item(request):
-    latest_item_id=(Item.objects.last()).id#fetching last inserted item id
-    if latest_item_id:
-        latest_item_id=latest_item_id + 1
-    print("Latest Id",latest_item_id)
+    # latest_item_id=(Item.objects.last()).id#fetching last inserted item id
+    # if latest_item_id:
+    #     latest_item_id=latest_item_id + 1
+    # print("Latest Id",latest_item_id)
     form=AddItem()
     form=AddItem(request.POST or None,request.FILES)
     if form.is_valid():
         form=form.save(commit=False)
-        form.slug=form.title + '-' + str(latest_item_id)
+        form.slug=form.title + '-' + str(id)
         print(form.slug)
         form.save()
         return redirect('admin_dashboard')
