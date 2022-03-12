@@ -389,7 +389,7 @@ razorpay_client = razorpay.Client(
 
 @login_required(login_url="login/")
 def payment(request):
-    # print("User:",request.user)
+    print("Inside payment ")
     order=Order.objects.get(user=request.user,ordered=False)
     currency ='INR'
     amount = order.total_amount() * 100# 1Rs=100Paisa
@@ -403,8 +403,8 @@ def payment(request):
     # order id of newly created order.
     razorpay_order_id = razorpay_order['id']
     from django.contrib.sites.shortcuts import get_current_site
-    callback_url ='https://'+ str(get_current_site(request))+"/paymenthandler/"
-    # callback_url ='http://'+ str(get_current_site(request))+"/paymenthandler/"#for local
+    # callback_url ='https://'+ str(get_current_site(request))+"/paymenthandler/"
+    callback_url ='http://'+ str(get_current_site(request))+"/paymenthandler/"#for local
     print(callback_url)
     # callback_url='paymenthandler/'
     # we need to pass these details to frontend.
@@ -438,6 +438,7 @@ def payment(request):
 def paymenthandler(request):
     # only accept POST request.
     if request.method == "POST":
+            print("Inside Payment handler")
             # get the required parameters from post request.
             payment_id = request.POST.get('razorpay_payment_id', '')
             razorpay_order_id = request.POST.get('razorpay_order_id', '')
@@ -449,7 +450,7 @@ def paymenthandler(request):
             }
 
         
-
+            print("Inside Payment handler")
             # verify the payment signature.
             result = razorpay_client.utility.verify_payment_signature(
                 params_dict)
@@ -480,6 +481,7 @@ def paymenthandler(request):
                     order_items=order.items.all()
                     order_items.update(ordered=True)
                     for item in order_items:
+                        print("Order Item is saving")
                         item.save()
                     order.ordered=True
                     print(order.payment_detail.paid)
@@ -490,11 +492,12 @@ def paymenthandler(request):
                     order.ordered = True
                     order.save()
                     messages.success(request,"Your order is successful")
+                    return render(request, 'Ecommerce/payment_success.html')
                 else: 
                     return redirect('payment')
                 
                 # render success page on successful caputre of payment
-                return render(request, 'Ecommerce/payment_success.html')
+                
             else:
 
                 # if signature verification fails.
@@ -633,13 +636,14 @@ def admin_dashboard(request):
 @login_required(login_url="login/")
 def admin_add_item(request):
     latest_item_id=(Item.objects.last()).id#fetching last inserted item id
-    next_item_id=latest_item_id + 1
-    print("Latest Id",next_item_id)
+    if latest_item_id:
+        latest_item_id=latest_item_id + 1
+    print("Latest Id",latest_item_id)
     form=AddItem()
     form=AddItem(request.POST or None,request.FILES)
     if form.is_valid():
         form=form.save(commit=False)
-        form.slug=form.title + '-' + str(next_item_id)
+        form.slug=form.title + '-' + str(latest_item_id)
         print(form.slug)
         form.save()
         return redirect('admin_dashboard')
