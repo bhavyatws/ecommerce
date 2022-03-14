@@ -669,7 +669,7 @@ def update_payment_status(request,pk):
         return redirect('admin_dashboard')
     context={'form':form,'instance':instance}
     return render(request,'Ecommerce/update_payment_status.html',context=context)
-
+@login_required(login_url="login/")
 def track_order(request):
     #prefetch_related is used as manytomany relation is used
     ordered_items=Order.objects.prefetch_related('items').filter(user=request.user,ordered=True)
