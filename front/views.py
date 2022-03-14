@@ -403,8 +403,8 @@ def payment(request):
     # order id of newly created order.
     razorpay_order_id = razorpay_order['id']
     from django.contrib.sites.shortcuts import get_current_site
-    callback_url ='https://'+ str(get_current_site(request))+"/paymenthandler/"
-    # callback_url ='http://'+ str(get_current_site(request))+"/paymenthandler/"#for local
+    # callback_url ='https://'+ str(get_current_site(request))+"/paymenthandler/"
+    callback_url ='http://'+ str(get_current_site(request))+"/paymenthandler/"#for local
     print(callback_url)
     # callback_url='paymenthandler/'
     # we need to pass these details to frontend.
@@ -675,8 +675,8 @@ def track_order(request):
     ordered_items=Order.objects.prefetch_related('items').filter(user=request.user,ordered=True)
     print(ordered_items)
     # order_from_order=OrderItem.objects.prefetch_related('')
-    for order in ordered_items:
-        print(order.items.all())
+    '''for order in ordered_items:
+        print(order.items.all())'''#it is for debugging
     context={'ordered_items':ordered_items}
     return render(request,'Ecommerce/track_order.html',context)
 #Debug payment page

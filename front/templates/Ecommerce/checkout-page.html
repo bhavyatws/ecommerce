@@ -10,6 +10,8 @@ var hideable_shipping_form = $('.hideable_shipping_form');
 var hideable_billing_form = $('.hideable_billing_form');
 var use_default_billing = document.querySelector("input[name='use_default_billing']");
 var use_default_shipping = document.querySelector('input[name="use_default_shipping_address"]');
+var shipping_addr_same_as_billing_addr = document.querySelector('input[name="same_billing_address"]');
+var billing_addr_same_as_shipping_addr = document.querySelector('input[name="same_shipping_address"]');
 
 console.log(use_default_shipping)
 if (use_default_billing){
@@ -20,6 +22,22 @@ if (use_default_billing){
     hideable_billing_form.show();
     }
     })};
+if (shipping_addr_same_as_billing_addr){
+    shipping_addr_same_as_billing_addr.addEventListener('change', function() {
+    if (this.checked) {
+    hideable_billing_form.hide();
+    } else {
+    hideable_billing_form.show();
+    }
+    })};
+if (billing_addr_same_as_shipping_addr){
+    billing_addr_same_as_shipping_addr.addEventListener('change', function() {
+        if (this.checked) {
+        hideable_shipping_form.hide();
+        } else {
+        hideable_shipping_form.show();
+        }
+        })};
 
 if (use_default_shipping){
 use_default_shipping.addEventListener('change', function() {
@@ -115,12 +133,14 @@ use_default_shipping.addEventListener('change', function() {
                                 <div class="custom-control custom-checkbox">
                                     <input type="checkbox"
                                            class="custom-control-input"
-                                           id="same_billing_address1"
-                                           name="same_billing_address1">
-                                    <label class="custom-control-label" for="same_billing_address1">
+                                           id="same_billing_address"
+                                           name="same_billing_address">
+                                    <label class="custom-control-label" for="same_billing_address">
                                         Shipping address is the same as my billing address
                                     </label>
                                 </div>
+                                {% if not default_billing_address %}
+                               
                                 <div class="custom-control custom-checkbox">
                                     <input type="checkbox"
                                            class="custom-control-input"
@@ -128,6 +148,7 @@ use_default_shipping.addEventListener('change', function() {
                                            id="set_default_shipping">
                                     <label class="custom-control-label" for="set_default_shipping">Save as default shipping address</label>
                                 </div>
+                                {% endif %}
                             </div>
                             {% if  default_shipping_address %}
                                 <div class="custom-control custom-checkbox">
@@ -188,12 +209,13 @@ use_default_shipping.addEventListener('change', function() {
                                 <div class="custom-control custom-checkbox">
                                     <input type="checkbox"
                                            class="custom-control-input"
-                                           id="same_billing_address"
-                                           name="same_billing_address">
-                                    <label class="custom-control-label" for="same_billing_address">
+                                           id="same_shipping_address"
+                                           name="same_shipping_address">
+                                    <label class="custom-control-label" for="same_shipping_address">
                                         Billing address is the same as my shipping address
                                     </label>
                                 </div>
+                                {% if not default_billing_address %}
                                 <div class="custom-control custom-checkbox">
                                     <input type="checkbox"
                                            class="custom-control-input"
@@ -201,6 +223,7 @@ use_default_shipping.addEventListener('change', function() {
                                            id="set_default_billing">
                                     <label class="custom-control-label" for="set_default_billing">Save as default Billing address</label>
                                 </div>
+                                {% endif %}
                             </div>
                             {% if default_billing_address %}
                                 <div class="custom-control custom-checkbox">
