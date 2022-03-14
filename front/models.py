@@ -2,6 +2,9 @@
 
 from email.policy import default
 from lib2to3.refactor import MultiprocessingUnsupported
+from operator import mod
+import os
+from urllib.parse import urlparse
 from xml.dom.pulldom import default_bufsize
 from MySQLdb import Timestamp
 from django.db import models
@@ -9,6 +12,10 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.timezone import now
 from django.shortcuts import reverse
 from django_countries.fields import CountryField
+# import urllib3
+# from django.core.files import File
+# from urllib.request import urlopen
+# from tempfile import NamedTemporaryFile
 
 category = (
     ("Electronics", "Electronics"),
@@ -91,6 +98,7 @@ ADDRESS_CHOICES=(
    
 )
 class Item(models.Model):
+    upload_path = 'Images'
     title=models.CharField(max_length=50)
     price=models.FloatField()
     discount_price=models.FloatField(blank=True,null=True)
@@ -98,7 +106,19 @@ class Item(models.Model):
     label=models.CharField(choices=LABEL_CHOICES,max_length=1)
     slug=models.SlugField(blank=True)
     description=models.TextField()
-    image=models.ImageField(upload_to='Images',null=True,blank=True)
+    image=models.ImageField(upload_to=upload_path,null=True,blank=True)
+    # image_url=models.URLField(blank=True,null=True)
+   
+
+    #For saving image's url in images field
+    # def save(self, *args, **kwargs):
+    #     if self.image_url and not self.image:
+    #         print("working fine")
+    #         img_temp = NamedTemporaryFile(delete=True)
+    #         img_temp.write(urlopen(self.image_url).read())
+    #         img_temp.flush()
+    #         self.image.save(f"image_{self.pk}", File(img_temp))
+    #     super(Item, self).save(*args, **kwargs)
     def get_absolute_url(self):
         return reverse("product", kwargs={"slug": self.slug})
     def get_add_to_cart(self):

@@ -39,7 +39,8 @@ def create_ref_code():
 
 class HomeView(ListView):
     model=Item
-    paginate_by=5
+    ordering=['id']
+    paginate_by=4
     template_name='Ecommerce/home-page.html'
 
 class ItemDetailView(DetailView):
