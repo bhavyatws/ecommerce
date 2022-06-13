@@ -591,8 +591,8 @@ def admin_dashboard(request):
     orders=Order.objects.all()
     payment_ids=Payments.objects.all()
 
-    for order in orders:
-        print("Payment Detail",order.payment_detail.id)
+    # for order in orders:
+    #     print("Payment Detail",order.payment_detail.id)
     
     total_items=Item.objects.all().count()
     #Custom logic for fetching first_week graph total order summary
